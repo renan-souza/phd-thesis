@@ -1,0 +1,17 @@
+
+\noindent\begin{minipage}[t]{1.0\linewidth}
+
+\begin{lstlisting}[
+    language=sh,
+    caption={\codefont{WfSteerCtl} command line interface for data reduction.},
+    label={listing:dchiron-commandline-monitor}
+]
+$> WfSteerCtl --user="Peter"
+    Output: Next workflow interactions will be issued by user Peter.
+$> WfSteerCtl --cut --dataset="opreprocessing" --criteria="wind_speed < 12.0 and wave_freq > 2.0"
+    Output: 177 data elements were cut off from OPREPROCESSING dataset.
+$> WfSteerCtl --cut --dataset="opreprocessing" --criteria="wind_speed < 11.3 and wave_freq > 1.8"
+    Output: 55 data elements were cut off from OPREPROCESSING dataset.
+
+\end{lstlisting}
+\end{minipage}

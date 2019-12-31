@@ -1,0 +1,22 @@
+\begin{table}[H]
+\caption{\codefont{Monitoring\_Query} table description.}
+\label{tab:dchirontab2}
+\begin{tabular}
+{
+m{.25\textwidth}|
+m{.73\textwidth}
+}
+\Xhline{4\arrayrulewidth}
+\rowcolor{TableHeaderColor}
+\textbf{Column Name} &                  \textbf{Description}                                     \\
+\Xhline{3\arrayrulewidth}
+\codefont{monitoring\_id}                      & Auto increment identifier.                                                  \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{interval}                   & Interval time (in seconds) between each monitoring query ($d_i$).    \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{monitoring\_query}                   & Raw SQL query to be executed.                          \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{wkfid}                         & Relationship between the monitoring queries and the current execution of the workflow. In d-Chiron's workflow database, there may be data from past executions for a same workflow. \\
+\Xhline{4\arrayrulewidth}
+\end{tabular}
+\end{table}

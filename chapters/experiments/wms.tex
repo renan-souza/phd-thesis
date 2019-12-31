@@ -1,0 +1,370 @@
+
+
+
+\section{Managing Steering Action Data in a WMS}
+\label{exps_wms}
+
+In this section, we present the experiments to aid the validation of one of the implementations of WfSteer,
+data reduction using d-Chiron WMS, introduced in Chapter \ref{chap_dchiron}.
+For these experiments, we use the 
+Ultra-deepwaters's Risers Fatigue Analysis workflow as the real-world application \ref{sub_rfa}.
+We show how users can run data analysis and understand, at runtime, the impact of their steering actions in a WMS.
+We present the case for data reduction in the Risers workflow 
+(Sec. \ref{sec_exp_rfa_reduction}), then we show
+steering action data analysis in this workflow 
+(Sec. \ref{sec_exp_rfa_data_reduction_analysis}), and conclude with an overhead evaluation (Sec. \ref{sec_dchiron_overhead_eval})
+
+
+\subsection{Use case: Ultra-deepwaters' Risers Fatigue Analysis}
+\label{sec_exp_rfa_reduction}
+
+As described before (Sec. \ref{sub_rfa}), the Risers Fatigue Analysis workflow has seven data transformations. 
+Except for the last one, they generate result data (both raw data files and some other domain-specific data values), which are consumed by the
+subsequent data transformations. 
+These intermediate data need to be analyzed
+during workflow execution. More importantly, depending on a specific
+range of data values for an output result data (\eg{} fatigue
+life value), there may be a specific combination of input data
+(\eg{} environmental conditions) that are more or less important
+during an interval of time within the workflow execution. The specific
+range is frequently hard to determine and requires a domain expert to
+analyze partial data during execution. For example, an input data
+element for $DT_2$ is a file that contains a large matrix of data
+values, composed of thousands of rows and dozens of columns. Each column
+contains data for an environmental condition and each row has data
+collected for a given time instant. Each row can be processed in
+parallel and the domain application needs to consume and produce other
+data files (on average, about 14 MB consumed and 6 MB produced per
+processed input data element). After many analyses online, the user
+finds that, for waves greater than 38 m with a frequency less than 1 Hz, 
+riser fatigue will never happen. Thus, within the entire matrix, any
+input data element that contains this specific uninteresting range does
+not need to be processed. Therefore, by reducing the input dataset, the
+overall data processed and generated are reduced and thus the overall
+execution time.
+
+\textbf{HPC Environment and Deployment}
+The experiments in this section were conducted on Grid5000\footnote{https://www.grid5000.fr}, using a
+cluster with 39 computing nodes, containing 24 cores each (summing 936 cores).
+Every node has two AMD Opteron 1.7 GHz 12-core processors, 48 GB RAM, and
+250GB of local disk. All nodes are connected via Gigabit Ethernet and
+access a shared storage of 10 TB.
+d-Chiron was executed with MySQL Cluster 7.4.9 as its in-memory distributed DBMS. The code to execute d-Chiron and setup files are available on GitHub \cite{d-ChironGitHub}.
+
+
+
+
+\subsection{User Steering Action Data Analysis}
+\label{sec_exp_rfa_data_reduction_analysis}
+
+\subsubsection{Running case}
+
+Let us consider the following scenario. Peter is an offshore engineer,
+expert in riser analysis and learned how to set up monitoring, analyze
+d-Chiron's workflow database, and use d-Chiron's \codefont{WfSteerCtl} program to steer the workflow.
+In Peter's project, the $Design \text{ } Fatigue \text{ } Factor$ is set to 3 and $service \text{ }
+life$ is set to 20 years, meaning that fatigue life must be at least 60
+years. Peter is only interested in analyzing risers with low fatigue
+life values as they are critical and might need repair or
+replacement. During workflow execution, it would be interesting if Peter
+could inform the WMS which input values would lead to low risk of
+fatigue so they could be removed. However, it is hard to determine the specific range of values \ie{} the
+slice, to be cut off. For this, Peter first needs to understand the
+pattern of input values associated with low risk of fatigue life values.
+In the workflow, the final value of fatigue life is calculated in the
+data transformation $DT_6$, but input values are obtained as the output of
+the data transformation $DT_1$, gathered from raw input files. Keeping provenance is essential to
+associate data from $DT_1$ with data from $DT_6$.
+
+To understand which input values are leading to high fatigue life
+values, Peter monitors the generated data online. For simplicity, we
+consider \textit{wind speed}, which is only one out of the many
+environmental condition parameter values captured in $DT_1$ to serve
+as input for the data transformation $DT_2$.
+ Peter knows that wind speed has a strong
+correlation with fatigue life in risers. He expects that with low speed
+winds, there is a lower risk of an accident.
+
+
+When the workflow execution starts, the Monitor Manager service is initialized. Then,
+Peter adds two monitoring queries:
+$q_1$ shows the average of the 10 greatest
+values of fatigue life calculated in the last 30 s of workflow execution,
+setting $\Delta t_1 = 30$ s; and $q_2$
+shows the average wind speed associated with the 10 greatest values of
+fatigue life calculated in the last 30 s, also setting the query interval
+$\Delta t_2=30$ s. We recall from Table \ref{tab:queries1}  that $q_1$ is
+similar to \refQ{Q1}, but only considering data processed in the last 30 seconds.
+$q_1$ and $q_2$ queries are added to the
+\codefont{Monitoring\_Query} table in the database.
+
+Peter monitors the results using the \codefont{Monitoring\_Query} table. These
+results can be a data source for a monitoring tool that plots
+dashboards dynamically, refreshed according to the query intervals.
+After gaining insights from the results and understanding patterns, he
+can start cutting the undesired values for wind speed. The monitoring
+query results $qr_{1t}$ and $qr_{2t}$ for the queries $q_1$ and $q_2$, as well as when the user reduced the data,
+are plotted along the workflow elapsed time, as shown in Figure \ref{fig:wind_elapsed_time}.
+  It shows $qr_{1t}$ (Fatigue life) in gray line with
+square markers and $qr_{2t}$ (Wind speed) in black line
+with triangle markers. These markers determine when the monitoring query
+occurred.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/results-rfa-user-steered-data-reduction.pdf}
+    \caption{Analyzing the impact of user-steered data reduction comparing Wind Speed (input) with Fatigue life.}
+    \label{fig:wind_elapsed_time}
+\end{figure}
+
+
+The
+workflow execution starts at $t=0$ s, but only after approximately
+150 s, the first output results from $DT_6$ start to be generated.
+From the first results, at $t=150$ s and $t=180$ s,
+ Peter checks
+that when wind speed is less than 16 km/h (see horizontal dashed line in
+$wind \ speed  = 16$ in Figure \ref{fig:wind_elapsed_time}),
+ the results lead to the largest
+fatigue life values. Since risers with large fatigue life values are not
+interesting in this analysis, he decides, at $t=190$ s, to remove all input
+data elements that contain wind speed less than 16 km/h. For this, the
+first user steering action $SA_1$ is issued with a command line to the
+\codefont{WfSteerCtl} program. User steering actions are represented with gray circles in the
+ horizontal axis (\emph{Elapsed time}). The time a user issued an interactive query 
+is stored in \codefont{User\_Query} table.
+
+The next marker after $SA_1$ happens at $t=210$ s. Comparing
+with the previous monitoring mark, at $t=180$ s, we can observe
+that this Peter's action $SA_1$ increases the minimum wind speed
+values to be considered from 14.2 km/h to 24.1 km/h. Also, we observe a
+significant decrease in the slope of the largest values for fatigue life
+(10.6\% lower). This means that the removal of these input data
+containing wind speed less than 16 km/h made the WMS not process data
+containing low wind speed values, which would lead to larger fatigue
+life results.
+
+Then, monitoring continues, but that slope decrease in the fatigue life after $t=180$ calls Peter's
+attention. To obtain a finer detail of what is happening, he decides to
+adjust monitoring settings, the monitoring interval times
+$\Delta t_1$ and $\Delta t_2$ in this case, at runtime. He reduces them to
+10 s to get monitoring feedback more frequently. We can observe that
+for both lines $qr_{1t}$ and $qr_{2t}$, the markers
+become more frequent during $t = [220,270]$ s.
+ This
+is because monitoring is registered at every 10 s. Although we show
+monitoring correlations between wind speed and fatigue life, other
+monitoring correlations could also be analyzed and users can add, remove
+or adjust monitoring queries at any time during execution. After
+verifying that the results are reasonable, he decides to adjust the
+monitoring setting to increase back the monitoring query intervals for
+both queries to 30 s after $t=270$ s. Then he observes that since
+$SA_1$, wind speed less than 25 km/h are leading to large fatigue
+life values. Then, at $t=310$ s, he calls \codefont{Steer} again to issue
+$SA_2$  hat removes input data for wind speed \textless{} 25 km/h.
+The next markers after $SA_2$ shows that this steering made the wind
+speed value associated with large fatigue life be at least 30.5 km/h and a
+decrease of 6.5\% in large fatigue life values between $t=300$ s
+and $t=330$ s.
+
+Similarly, Peter continues to monitor and steer the execution.
+He issues $SA_3$ at $t=370$ s to remove input data with wind speed
+\textless{} 30.5 km/h, making a decrease of 4.9\% in large fatigue life
+(comparing fatigue life in $t=360$ s and $t=390$ s.
+ Then,
+he issues $SA_4$ at $t=430$ s to remove input data with wind
+speed \textless{} 34.5, attaining a decrease of 1.7\% in large fatigue
+life (comparing fatigue life in $t=420$ s and $t=450$ s.
+Despite this small decrease, he decides at $t = 520 \text{ }$ to further remove
+data, but with wind speed \textless{} 35.5 km/h. However, no decrease
+greater than 1\% in the large fatigue life values were registered after
+this last Peter's steering. Thus, he keeps analyzing the monitoring
+results, but does not remove input data anymore until the end of
+execution.
+
+We store each interaction query, issued by the user, in the
+\codefont{User\_Query} table and map (in table
+\codefont{Modified\_Elements}) its rows with rows in \codefont{Dataset} and
+\codefont{Task} tables, to consistently manage the steering action data of which data elements were
+modified (in this case, removed) by each specific user steering action. Thus,
+managing steering action data helps to analyze how specific
+action impacted the results. Figure \ref{fig:wind_elapsed_time} shows that
+ some specific
+action imply significant changes in lines' slopes (key output
+values for the user).
+
+\subsubsection{User-steered Data Reduction Analysis}
+
+Now we analyze how those previous steering actions impact
+the number of resources saved during the workflow execution. More
+specifically, we analyze three aspects: (i) the number of data elements
+reduced, (ii) the time that was saved due to the input data not
+processed, and (iii) the number of bytes of the raw data files that were
+not processed.
+For validation purposes, we count the resources saved
+as consequences of a data reduction. For this, we compare the executions
+with and without user steering. We run the same workflow and input
+datasets for both scenarios. The workflow execution with no steering
+processes all input data, including those containing wind speed values
+that lead to risers with low risk of fatigue, which are not valuable for
+Peter's analyses.
+
+In Figure \ref{fig:data_red_graficos_total}, we depict the three analyzed aspects per data transformation in the
+workflow. In other words, we count the total input data elements each
+data transformation consumes; the total number of gigabytes of data files processed
+in each data transformation; and the total time each data transformation took to complete. In
+total, considering all data transformations, the workflow with no steering
+processed 60,939 input data elements in parallel, 356 GB of domain data
+files and the overall execution time was 16.3 min running on the
+936-cores cluster.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/data-elements-per-DT.pdf}
+    \caption{Total data elements, gigabytes, and time consumed by data transformation with no user steering.}
+    \label{fig:data_red_graficos_total}
+\end{figure}
+
+
+Then, we can compare these numbers with analogous numbers in the
+scenario with user-steered data reductions. Table \ref{tab:summary_user_steered_reduction} summarizes the user
+steering actions (\ie{} user-steered reductions) performed.
+
+\input{tables/chap6_tab1}
+
+Figure~\ref{fig:data_red_user_steered_red} 
+illustrates how each
+steering action $SA_i$ affected the three analyzed aspects in each
+workflow data transformation: Figure~\ref{fig:data_red_user_steered_red}~(A) shows the number of input data elements
+reduced, Figure~\ref{fig:data_red_user_steered_red}~(B) shows the time saved, and Figure Figure~\ref{fig:data_red_user_steered_red}~(C) shows the
+amount of gigabytes not processed due to data reduction. In the three
+charts, although the reductions happen in the dataset \codefont{I\_Preprocessing} consumed by
+$DT_2$, we can see that they impact all subsequent
+data transformations ($DT_1$, which is a preceding data transformation, is not
+affected by the reductions). In particular, we can see that the first
+steering action, $SA_1$, alone causes a time reduction of 15\%, \ie{} $SA_1$
+makes the data transformation $DT_3$ complete 33 s faster, whereas without
+reductions $DT_3$ would take 221 s.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/reductions-per-dt.pdf}
+    \caption{Reduced resources by data transformation caused by each user-steered reduction $SA_i$.}
+    \label{fig:data_red_user_steered_red}
+\end{figure}
+
+
+Figure \ref{fig:data_red_total_elements} shows the summary of the impacts in the entire workflow by
+each action ($SA_i$).
+Overall, the user-steered reductions in this
+experimental validation yield a reduction of 7,854 out of 60,939 data
+elements (12.89\%), including elements in \codefont{I\_Preprocessing} and elements in
+subsequent datasets as consequences of the reduction in \codefont{I\_Preprocessing}.
+Also, the steering actions make the WMS not process about 51 GB out of 356 GB (14.9\% of
+data files processing reduction) and the data transformations run faster, reducing
+in total 5.3 min out of 16.3 min (32.4\% of total workflow execution time
+reduction) in the 936-cores cluster.
+In particular, we see that the first user-steered reduction, $SA_1$, represents
+45\% of the total amount of time saved, meaning that at the beginning, the user can
+identify a large slice of the input data that would not lead to
+interesting results, and we see that the last action $SA_5$ did
+not considerably affect execution. These results were obtained by
+querying the workflow database at the end of execution. By monitoring and interactively analyzing the workflow database online,
+users can have a better understanding of how their steering actions influenced the results of their computational experiments, especially they can explicitly inspect how their interactions reduced the used computational resources, thus contributing to validate that WfSteer allows for tracking steering actions in a WMS.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/reduced-data-elements-per-DT.pdf}
+    \caption{Summary of the user-steered reductions ($SA_1$ -- $SA_5$) in the workflow.}
+    \label{fig:data_red_total_elements}
+\end{figure}
+
+
+
+
+\subsection{Overhead Evaluation}
+\label{sec_dchiron_overhead_eval}
+
+
+Now we evaluate the overhead added to execute the experiment conducted using
+the Risers Fatigue Analysis workflow running on d-Chiron. d-Chiron implements the
+ dataflow-oriented approach and manages domain, provenance,
+and execution data at runtime, enabling
+users to steer the workflow, but introduces overhead. Measuring the overhead caused by execution control management has been presented in past works 
+\cite{souza_controlling_2015_thesis,Souza2015Parallel,Souza2015Monitoramento}.
+Here, we discuss the overhead caused by user-steered data reduction and adaptive monitoring. First, when a data
+reduction happens, there are data movements in the workflow database,
+\ie{} some tasks and input data elements are updated or
+transferred from a table to another (Sec. \ref{further-implementation-details-dchiron}).
+Time spent doing
+these updates in the database is significantly lower than the overall
+workflow execution time. Each steering action $SA_i$
+(Table \ref{tab:summary_user_steered_reduction}) takes less than 1 second to finish, whereas
+the overall execution time of the workflow, after the reductions, is 661 seconds.
+Thus, those data movements' overhead are negligible.
+Second,
+our adaptive monitoring approach adds overhead and needs to be measured.
+Recall that every monitoring query $q_i \in QS$ is
+run by a thread at each $\Delta t_i$ seconds (Sec. \ref{adaptive-monitoring-implementation}).
+Depending on the number $|QS|$  of
+threads and on the interval $\Delta t_i$ there may be too
+many concurrent accesses to the workflow database, 
+which may add overhead.
+
+To measure this, we set up the \codefont{WfSteerCtl} in d-Chiron to run monitoring queries. 
+The queries are variations of 
+the queries \refQ{Q1}--\refQ{Q7} (Tables \ref{tab:queries1} and \ref{tab:queries1}).
+For example, in query \refQ{Q2}, we vary the curvature value.
+We also modify them to
+calculate only the results over the last $\Delta t$ seconds, at each $\Delta t$
+seconds. To evaluate the overhead, we measure execution time without
+monitoring and then with monitoring, but varying the number $|QS|$ of queries
+ and the interval $\Delta t$, which is considered the same for
+all queries in $QS$ in this experiment.
+The experiments were
+repeated until the standard deviation of workflow elapsed times were less
+than 1\%. The results are the median of these times within the 1\%
+margin. Figure \ref{fig:adaptive_monitoring} shows the results, where the gray portion represents
+the workflow execution time when no monitoring is used and the black
+portion represents the difference between the workflow execution time
+with and without monitoring (\ie{} the monitoring overhead).
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/overhead-wms.pdf}
+    \caption{Results of adaptive monitoring overhead.}
+    \label{fig:adaptive_monitoring}
+\end{figure}
+
+From these results, we observe that when the interval $\Delta t$ is equal to
+30 s, the overhead is negligible. For 1 s interval, the overhead is higher
+when the number of monitoring threads is also higher. This happens
+because three queries are executed in each time interval (see Listing \ref{listing:steps_executed_each_interval}),
+for each thread. In the scenarios with 30 threads, there are 120
+queries in a single time interval $\Delta t$.
+ In that case, if $\Delta t$ is small, \eg{}
+ $\Delta t = 1$, there are 120 queries being executed per
+second, just for the monitoring.
+In d-Chiron, the database that is queried by the
+monitors is also concurrently queried by the WMS engine, thus adding
+higher overhead. However, even in this specific scenario that shows
+higher overhead $|QS|=30$ and $\Delta t=1$, it is only 33 s or
+3.19\% higher than when no monitoring is used. Most of the real
+monitoring cases do not need such frequent (every second) updates. If
+30 s is frequent enough for the user, the overhead is negligible,
+like in this test case. We also evaluated the same scenarios without
+storing monitoring results in the workflow database, but rather appending in
+CSV files, which is simpler. As Figure \ref{fig:adaptive_monitoring} shows, the results are nearly
+the same as in associated withase (saving in the workflow database or saving in CSV
+files). This suggests storing all monitoring results in the database
+at runtime, which enables users to submit powerful queries as the
+monitoring results are generated, with the workflow data in the database.  This
+would not be possible with a solution that appends data to CSV files.
+Therefore, these findings contribute to
+validate that WfSteer allows for managing steering action with low execution overhead in a WMS.
+

@@ -1,0 +1,22 @@
+\noindent\begin{minipage}[t]{1.0\linewidth}
+\begin{lstlisting}[
+    language=sh,
+    caption={Command lines to use DfAdapter.},
+    label={listing:dfadapter_commandlines}
+]
+$> WfSteerCtl --user="Bob"
+$> WfSteerCtl --tune
+      --dataset="I_Iteration_Params"
+      --p='{"max_linear_iterations": 500}'
+      --reason="checking how linear iterations affects
+               convergence"
+$> echo '{
+    "flow_initial_linear_solver_tolerance": 1.0e-6,
+    "amr/c_fraction": 1.0e-5
+   }' > new-values.json
+$> WfSteerCtl --tune
+       --dataset="I_Solver"
+       --p="new-values.json"
+
+\end{lstlisting}
+\end{minipage}

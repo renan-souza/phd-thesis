@@ -1,0 +1,144 @@
+\section{Methodology to Analyze the Overhead}
+\label{overhead-analysis-section}
+
+The adoption of our approach depends on how much execution time overhead it
+implies. The overhead depends on the data needed for analysis and
+adaptation. For analysis, it depends on the workflow data identified in
+the workflow script that needs to be captured. That is, which input and
+output data values, for each data transformation, should be monitored
+during execution. For adaptation, which adaptation points should be added
+and how many adaptation actions happened during execution. In
+both cases, the overhead depends on data collected for analysis
+and adaptation actions, always based on user decisions.
+
+We use the dataflow-oriented concepts (Secs. \ref{subsec_datacentric} and \ref{user_steering_def}) to express the
+overhead. Let $\gamma$ be a data transformation execution, \ie{} a task. When a task $\gamma$ is executed to perform a data
+transformation $DT_y$, the execution cost of $\gamma$,
+$c(\gamma)$, is given by its actual computational cost
+$comp(\gamma)$ (\ie{} the inherent cost of
+executing $DT_y$) plus the overhead
+$o(\gamma)$ introduced because of the utilization of our approach:
+\begin{equation}
+\label{eq_1}
+    c(\gamma) = comp(\gamma) + o(\gamma)
+\end{equation}
+Let the overhead $o(\gamma)$ of a
+task $\gamma$ be expressed as a function of analysis
+$anl(\gamma)$ and adaptation adp $s(\gamma)$ overhead introduced in the analysis and adaptation points in the workflow script code, respectively:
+\begin{equation}
+    o(\gamma) = anl(\gamma) + adp(\gamma)
+\end{equation}
+The overall overhead is given by the sum of
+$o(\gamma)$ for all tasks $\gamma$, of all data
+transformations $DT_{y} \in T$. Next, we detail the
+analysis and adaptation components.
+
+\textbf{Analysis overhead.}
+Analysis overhead
+$anl(\gamma)$ is defined by the data capture
+overhead $anl_{point}(\gamma)$ and raw data extractions
+$ext(\gamma)$ during each data transformation
+execution identified by the user as relevant for analysis:
+\begin{equation}
+    anl(\gamma) = anl_{point}(\gamma) + ext(\gamma)
+\end{equation}
+Provenance data capture overhead $anl_{point}(\gamma)$ depend
+on the number of data values of each data element captured at a task
+execution $\gamma$. Each execution $\gamma$ of a data transformation
+$DT_y$ consumes input data elements in $I_{DS}$ and produces output
+data elements in $I_{DS}$. In DfAdapter, data elements are stored at
+once in the beginning (input data elements) and at the end (output data
+elements) of each task $\gamma$.
+
+Raw data extraction overhead $ext(\gamma)$ 
+depends on the number of data values the user wants to extract from raw
+data files at each execution of a data transformation $DT_y$.
+Let $V_\gamma$ be the
+set of all data values extracted when $\gamma$ is executed. Each
+extracted data value $v_i \in V_\gamma$ has an associated data
+attribute $a_i$ has semantics in $V_I$ or $V_O$, depending on if
+$v_i$ is in a data element in $I_{DS}$ or $O_{DS}$, respectively.
+Therefore, the extraction overhead $ext(\gamma)$, for each
+$\gamma$ to execute a data transformation $DT_y$ is therefore given by the summation of
+costs to extract each $v_i \in V_\gamma$:
+\begin{equation}
+    ext(\gamma) = \sum_{v_i \in V_\gamma} ext(v_i)
+\end{equation}
+The cost to extract a data value depends on application-specific raw
+data extractors \cite{Silva2017Raw}.
+
+
+\textbf{Adaptation overhead.} 
+The adaptation overhead occurs in
+data transformations that have an adaptation point. Adaptation overhead also
+depends on when an adaptation action happens.
+When an adaptation action
+happens, all those operations presented in the sequence diagram in
+Figure \ref{fig:dfadapter_seq_diagram} are triggered. 
+Let $T' \subset T $ be the subset of the data
+transformations that have adaptation points. Then,
+\begin{equation}
+\label{eq_5}
+    adp(\gamma) = adp_{point}(\gamma) + action(\gamma) 
+\end{equation}
+\noindent 
+where 
+$adp_{point}(\gamma)$
+is the overhead associated
+to adding adaptation points to $DT_y$,
+$action(\gamma)$
+is the overhead associated to
+computing that an adaptation action happened, and
+$adp_{point}(\gamma) = action(\gamma) = 0, \forall DT_y \notin T'$.
+
+
+
+\textbf{Putting it all together.} The overall cost
+$c(Df)$ to compute a dataflow $Df$ is
+given by the sum of costs to compute the
+actual computation $comp(Df)$,
+provenance capture $anl_{point}(Df)$, 
+raw data extractions $ext(Df)$,
+adaptation points $adp_{point}(Df)$,
+adaptation actions $action(Df)$
+for the entire dataflow $Df$. That is:
+\begin{equation} 
+\label{final_eq}
+\begin{split}
+c(Df)   & = comp(Df) + o(Df)                                  \\
+        & = comp(Df) + anl(Df) + adp(Df)                     \\
+        & = comp(Df) + anl_{point}(Df) + ext(Df) + adp_{point}(Df) + action(Df) 
+\end{split}
+\end{equation}
+\noindent where
+$c(Df) = \sum_\gamma c(\gamma)$, for all tasks $\gamma$, for all $DT_y \in T$.
+Analogously, the components of
+$c(Df)$ can be obtained by the summation of each
+individual component for all tasks.
+That is,
+$anl_{point}(Df) = \sum_\gamma anl_{point}(\gamma)$, 
+$ext(Df) = \sum_\gamma ext(\gamma)$,
+and so on.
+
+In CSE applications, tasks are often a complex, meaning that for a task $\gamma$, $comp(\gamma)$ takes at least a few
+seconds, but often minutes long~\cite{Raicu2008Many-task}.
+Experimentally analyzing the individual elapsed time of the components,
+$anl_{point}(\gamma), adp_{point}(\gamma), adp_{action}(\gamma)$
+of the overhead $o(\gamma)$,
+we observe that, on average, they are close to
+constant and typically milliseconds-long.
+Therefore, we can assume that
+in typical CSE applications $comp(\gamma) >> o(\gamma)$, which leads to the generalization that overhead of capturing user steering action data is negligible.
+Also,
+because such operations occur asynchronously and in a different
+computing resource, the time for the individual components of
+$o(\gamma)$ is ``hidden'' by the actual computation, which
+is significantly higher. This contributes to reduce the impact on the
+workflow execution performance.
+If we consider $ext(Df)$  which depends on
+the user settings, it is still typically very much smaller than the raw
+data that is being generated and stored on files. As we show in our real
+case study (Sec. \ref{sec_overhead_eval_wokflow_script}), the overall $o(Df)$, including the
+costs for $ext(Df)$, is less than 2\%, which is still negligible.
+
+

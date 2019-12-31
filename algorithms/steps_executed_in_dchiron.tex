@@ -1,0 +1,13 @@
+\noindent\begin{minipage}[t]{1.0\linewidth}
+\begin{lstlisting}[
+    caption={Steps executed by each thread within a time interval.},
+    label={listing:steps_executed_each_interval},
+    mathescape=true
+]
+Execute the monitoring query $q_i$.
+Store query results in the workflow database.
+Reload information for $q_i$ from the workflow database for the next time iteration $t + \Delta t_i$. The user could have adapted any of this information.
+Wait for $\Delta t_i$ seconds.
+
+\end{lstlisting}
+\end{minipage}

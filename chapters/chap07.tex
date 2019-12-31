@@ -1,0 +1,105 @@
+\chapter{Conclusions} \label{chap7}
+
+In this thesis, we aimed at supporting the workflow steering lifecycle to enable computational scientists and engineers (users) to understand their experiments when they are steering (monitoring, analyzing, adapting) large-scale workflows.
+To address the problem of managing steering action data in large-scale workflows, we proposed WfSteer, an approach that combines new provenance data management concepts, methods, and techniques that allow for tracking steering actions, which is critical to support the workflow steering lifecycle while adding negligible overhead. We designed and built two isntantiations for WfSteer, \ie{} DfAdapter, for workflow scripts, and another in d-Chiron, for applications that can benefit from WMSs, which are the two typical ways users conduct their experiments. In this chapter, we share the lessons we learned (Sec. \ref{lessons}) and future work (Sec. \ref{future}).
+
+\section{Lessons Learned}
+\label{lessons}
+
+To validate the proposed approach and this thesis's  hypothesis itself, we split the hypothesis into two main aspects:
+one is to allow for tracking steering actions by means of managing steering action data in large-scale workflows and the other is to
+do this incurring negligible execution overhead.
+In this validation process, we learned several lessons that we share in this section.
+
+For the first aspect, we began with a thorough analysis of the state-of-the-art on user steering in general, extending with an in-depth search in the literature that are not traditionally found in the literature in the context of WMSs, such as \citet{Mattoso2015Dynamic}' survey.
+We concluded that the literature lacks techniques and methods to support the management of steering action data, either for WMSs or for parallel computational simulations written as scripts.
+Second, after analyzing how users interact with their CSE experiments, we learned the data that characterizes the \textit{user steering action data}, and how these data are generated when users perform \textit{steering actions}, which are the two core concepts behind WfSteer.
+Finally, we proposed the notion of provenance of steering actions and a provenance data diagram, called PROV-DfA, an extension of the W3C PROV standard, to model provenance of steering action data.
+We observed that the adherence to PROV and its dataflow extensions, namely PROV-Df, facilitated the modeling of important data that need to be related to the steering actions. Modeling data elements reduced in a $Cut$ action and relating the iterations with parameters tuned in a $Tune$ action in an iterative simulation were challenging modeling tasks. The formal characterization of user steering action in general and its specializations ($Cut$ and $Tune$) contributed to the modeling.
+These findings are applicable either for workflow scripts and for WMSs. However, during our investigations, we found 
+specific issues for the management of steering actions for each case that are worth mentioning separately.
+
+For workflow scripts, we can include that by implementing DfAdapter, we faced system engineering difficulties that were addressed with
+the general conceptual architecture of DfAdapter.
+For instance, exposing the data the user wants to steer, so our
+data capture system can capture when the data change in case of an adaptation
+was solved by specifying how users can wrap
+adapters of their workflow so that the adapter is called, steering action data are
+ captured, related, and stored. 
+ In the experiments carried out on Lobo Carneiro (up to 6,048 CPU cores) running a real case in Computational Fluid Dynamics in Geoscience for the O\&G industry, we observed that the ability our approach gives to the users for them to have a detailed understanding of their steering actions and the consequences of their actions improves the users' awareness, putting them in the loop
+of their simulations. For example, the user can explicitly
+identify that specific fine-tunings he made in the simulation solver
+made the workflow successfully finish without crash and
+with an approximate reduction of 37\% (10 days) of the total time.
+
+For the instance of WfSteer in a WMS, we observed that a data-centric WMS, like d-Chiron, enables dynamic
+adaptations of the data at runtime, but addressing consistency issues when users are adapting is a significant part of the implementation efforts when allowing for tracking steering action data in a WMS.
+We learned that our design principles that exploit a highly efficient
+distributed in-memory relational DBMS that allows for  ACID, strong-consistent parallel
+transactions facilitated the implementation of the generic method we proposed
+for addressing consistency issues.
+Then, the implementation of WfSteer techniques in d-Chiron,
+such as the capture and relationships of steering action data using
+PROV-DfA concepts, enabled users to analyze the consequences of their actions
+at runtime.
+In the experiments carried out on
+a Grid5000 HPC machine with 936 CPU cores running a real use case, ultra-deepwaters' risers fatigue analysis workflow in the O\&G industry,
+we observed that
+by monitoring and interactively analyzing the workflow database online,
+users could evaluate that because of their specific interactions
+they managed to save 14.9\% of physical disk space and 32.4\% of total workflow execution time, hence significantly saving computing resources.
+
+Now, for the second aspect of the hypothesis, that is, to keep the execution overhead low, we also separate by workflow scripts and WMS.
+
+For workflow scripts, 
+we learned that avoiding conflicts with the users' workflows is not trivial.
+To address this, we proposed system design principles, such as
+asynchronous API calls and leave heavy operations for provenance data management, such as the creation of provenance data relationships, to the Data Manager services, which are deployed on a separate computing node, hence avoiding competition with the user application.
+Additionally, allowing users to specify what should be
+monitored or adapted is far from trivial and to address this we proposed a methodology of use.
+The methodology foments the participation of the user in the specification of
+what should be captured for steering.
+We learned that this not only helps the data analysis, as the user knows what are being managed for steering and hence
+specifies only the relevant data, but it also reduces overhead because only the
+interesting data for steering are captured.
+In the experiments with DfAdapter, we observed that the added execution overhead caused by
+steering action data capture and adaptation is less than 1\%, whereas the overhead for workflow data capture and raw data extraction sum about 1.5\%, which is also negligible.
+
+For the WMS instance, we learned that the exploitation of a highly efficient
+in-memory distributed DBMS both as the main source of analysis (managing
+the workflow database) and as the main data structure for parallel
+task scheduling improves the overall performance of the workflow execution.
+This includes the adaptive monitoring approach, which added less than 1\% of overhead when the monitoring query intervals were 30 seconds and about 3\% when it was 1 second, as shown in the experiments with d-Chiron.
+
+Therefore, we conclude with these findings that
+the user steering action data management concepts and techniques introduced with WfSteer allowed users to track their actions online, enabling them to understand how their steering actions were influencing a running workflow. 
+
+\section{Future Work}
+\label{future}
+
+There are still several other open challenges to support the workflow steering lifecycle that could be addressed as future work.
+This thesis is mainly focused on data management aspects to support online data analysis.
+However, since the context involves a human in the loop, aspects traditionally studied by
+the Human-Computer Interaction scientific community could be addressed to enhance
+the steering support. For example, to interact with our implemented system,
+users need to run command lines to call the adapter or run SQL queries to analyze
+the workflow data. Usable interfaces could potentially improve the users' engagement
+with their own experiment data. Similarly, \textit{in-situ} data visualization techniques
+\cite{Bauer2016In} could be proposed and extended, which would highly benefit
+the users in understanding their workflow data, combined with the steering action data
+managed by our solution.
+In addition, our techniques and methods are heavily dependent on the users’ knowledge
+to identify correlations between input and output data to determine which data are relevant
+and which subsets of input datasets are interesting or not.
+Furthermore, enriching the workflow database steering action data,
+jointly with provenance, execution, and domain data, enables future interaction
+analysis. In addition to reliability and reproducibility, having such
+data enables users to learn from their own adaptations: they may find
+that when they tune certain parameters to a given range of values, the
+convergence of the solver improves by a certain amount.
+Moreover, we believe that managing steering action data jointly with multiworkflow data \cite{souza_efficient_2019} can highly enhance the analytical capabilities in even more complex settings that require several, distributed, heterogeneous workflow executions in CSE.
+Finally, these
+steering action data allow for building AI-based systems that help users
+while they are steering simulations \cite{Silva2018JobPruner:},
+as they can extend their training database with provenance of
+adaptations.

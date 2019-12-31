@@ -1,0 +1,119 @@
+%%% MY COMMANDS
+
+\newcommand{\thesistitle}{Supporting User Steering in Large-scale Workflows with Provenance Data}
+\newcommand{\thesistitlept}{Apoio a Workflows de Larga Escala Conduzidos por Usuário com Dados de Proveniência}
+
+
+
+
+% Table Definitions
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcommand{\mc}[2]{\multicolumn{#1}{c}{#2}}
+
+
+
+% Colors
+\definecolor{TableHeaderColor}{gray}{0.95}
+\definecolor{x_darkred}{RGB}{177, 0, 0}
+
+
+
+
+
+
+\newcommand{\needref}[1][?]{\colorbox{lightgray}{[R #1]}}
+% Usage: \needref{} or \needref[any hint on the refs]{}
+
+\newcommand{\eg}{\emph{e.g.},}
+\newcommand{\egUpper}{\emph{E.g.},}
+\newcommand{\ie}{\emph{i.e.},}
+\newcommand{\etal}{\textit{et al.}}
+
+\newcommand{\codebackground}[1]{\colorbox{black!5}{\parbox{\dimexpr\linewidth-2\fboxsep}{\fontfamily{pcr}\scriptsize#1}}}
+
+
+%\newcommand{\codefont}[1]{{\fontfamily{pcr}{\small{#1}}}}
+\newcommand{\codefont}[1]{\texttt{#1}}
+% \texttt{printf}
+% \verb$printf$ 
+
+% Counter
+\newcounter{qcounter}
+\newcommand{\createQ}[2]{
+    \refstepcounter{qcounter} \label{#1} {Q\ref{#1}} {#2}
+}
+%\newcommand{\refQ}[1]{ Q\ref{#1} }
+\newcommand{\refQ}[1]{Q\ref{#1}}
+%\newcommand{\refQ}[1]{#1}
+% Usage: first create the reference using \createQ{label_name}, then you can make a reference to it using refQ{label_name}
+
+\newcommand{\queries}{\hyperref[tab:queries]{Q1--Q6}}
+\newcommand{\textonto}[1]{\texttt{\small{#1}}}
+\newcommand{\textontohead}[1]{\textbf{\emph{#1}}}
+\newcommand{\textsoftware}[1]{\textsc{#1}}
+
+\newcommand{\alert}[1]{\textcolor{red}{#1}}
+
+
+
+\newcommand{\defterm}[2]{\symbl{\capitalisewords{#1}}{#2}\textit{#1}}
+\newcommand{\myabbrev}[2]{\abbrev{#1}{#2}{#2 (#1)}}
+\newcommand{\mychap}[2]{\chapter{\capitalisewords{#1}}\label{#2}}
+
+\newcommand{\subsubsubsection}[1]{\vspace{5mm} \noindent \emph{#1} \vspace{5mm} }
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+
+\newenvironment{mydef}[2] % #1 => def label, def caption
+{
+
+  \begin{definition}{\textbf{#2}.}  \label {#1}
+}
+{
+\end{definition}
+}
+
+
+\newcommand{\redx}{\large\textcolor{x_darkred}{\textbf{X}}}
+
+
+%%%%%%%%%% TODO Notes %%%%%%%%%%%
+% Usage:
+% \todocmd[<optional> inline]{Text to remember}
+% %\usepackage[disable]{todonotes}
+
+
+
+\newcommandx{\revise}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\crossref}[2][1=]{\todo[linecolor=violet,backgroundcolor=violet!25,bordercolor=violet,#1]{#2}}
+\newcommandx{\formatting}[2][1=]{\todo[linecolor=green,backgroundcolor=green!25,bordercolor=green,#1]{#2}}
+\newcommandx{\requestrevision}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\addintro}[2][1=]{\todo[linecolor=yellow,backgroundcolor=yellow!25,bordercolor=yellow,#1]{#2}}
+
+
+
+\lstdefinestyle{mystyle}{
+    %backgroundcolor=\color{backcolour},   
+    %commentstyle=\color{codegreen},
+    %keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{darkgray},
+    stringstyle=\color{purple},
+    basicstyle=\footnotesize,
+    %keywordstyle=\bfseries,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=1,
+    upquote=true,
+    frame=single,
+    %linewidth=14cm,
+    morekeywords={include, printf}
+}
+\lstset{style=mystyle}

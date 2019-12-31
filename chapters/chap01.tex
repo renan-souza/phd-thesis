@@ -1,0 +1,143 @@
+\chapter{Introduction} \label{chap_intro}
+
+How to enable computational scientists and engineers to monitor and understand their experiments when they are steering them on large-scale computers? 
+This is the central question we address in this thesis.
+With the astonishing evolution of computer science methods, tools, and hardware, more and more scientists and engineers, from a wide variety of scientific domains like Physics, Agriculture, and Geosciences, have gained access to large-scale computers and software that enabled the conduction of experiments with an ever-growing level of detail and amount of data.
+This culminated in the development of an emerging interdisciplinary field of computing: \myabbrev{CSE}{Computational Science and Engineering} \cite{Rude2016Research}.
+
+%\section{Context: Computational Science and Engineering}
+
+CSE combines mathematical models that simulate natural phenomena, numerical algorithms for solving complex equations,  \myabbrev{HPC}{High Performance Computing} techniques to develop programs that can take advantage of modern parallel hardware, and data science techniques to analyze huge amounts of scientific data \cite{Rude2016Research}.
+This allows for both remarkable scientific discoveries -- like the detection of Gravitational Waves, which led to the Nobel Prize in Physics in 2017 \cite{F.daSilva2016Pegasus} -- and game-changing business impact in industries that depend on such experiments to generate revenue -- like the \myabbrev{O\&G}{Oil and Gas} industry, which leverages CSE experiments to improve (\eg{} increase the precision, reduce the environmental impact) oil exploration and production processes \cite{ibm_research_editorial_staff_ai_2018}.
+
+However, conducting such experiments is far from trivial. They have the exploratory nature of science, meaning that typically there is a huge solution space to be explored. An experiment run often lasts for hours or days, even running on large-scale computers, like HPC machines. That is why the computational scientists and engineers (CSE users) are often applying HPC techniques in their software, aiming to run in parallel and reduce the execution time. 
+Long execution times means that not only the HPC machines are executing for longer, but also the qualified computational scientists and engineers, whose time is quite valuable, are waiting for longer. So, when investigating new tools to be added to their toolset, these CSE users typically discard any tool that can add significant execution overhead to their already long experiment executions.
+
+In addition, to ease the complexity of the CSE experiments, a widely adopted practice is to model them using a \textit{scientific workflow} (also known as \textit{large-scale workflow} or \textit{workflow}, for short) abstraction \cite{F.daSilva2017characterization}.
+The workflow abstraction helps to break a large CSE experiment into smaller pieces -- such as programs, components, functions, or meaningful sections of a simulation code -- interconnected through a dataflow (\ie{} the data produced by one are consumed by another).
+These workflows are typically concretized either as a script, \ie{} a sequence of computing commands that often invoke highly parallel libraries, or as workflows managed by a \myabbrev{WMS}{Parallel Workflow Management System},
+like Chiron \cite{Ogasawara2011algebraic} and Pegasus \cite{Deelman2015Pegasus}.
+These are the two typical ways of conducting CSE experiments on large-scale computers.
+
+
+When modeling the workflows, the CSE users specify the \textit{workflow data}, which are the data processed (\ie{} consumed and generated) during the workflow execution, like scientific data files and parameters for the algorithms or numerical methods. By varying the workflow data, the users investigate different hypotheses for their experiments, often in a ``what-if" basis, analyzing how the variation affects \myabbrev{QoI}{Quantities of Interest}, like precision, convergence, numerical errors.
+Thus, during the execution, they need to analyze the workflow data to verify their hypotheses, understand the intermediate results, monitor how variations of data or parameters affect the QoIs, and check on the experiment's health.
+ They analyze the experiment's health both from a domain perspective (\eg{} is there any result that dissatisfies a physical constraint?) and from a computational perspective (\eg{} is the workflow consuming memory, disk, CPU as expected?). 
+ Depending on the results, they intervene by changing the workflow data. 
+ 
+ In this context, in 2013, \citet{mattoso_user-steering_2013} suggested using provenance data as a good alternative to provide for such experiments’ analyses, even at runtime, which has been successfully explored in real experiments  \cite{Mattoso2015Dynamic, silva_adding_2018, Souza2017Data, Dias2015Data-centric, Camata2018In}. 
+ Data provenance (\ie{} data lineage) contains a structured record of the data derivation process, that is, how data items are consumed and produced, and their data derivation paths  \cite{herschel_survey_2017}.
+ In workflows, provenance data contain not only this historical record but also data about the computational processes and agents (\eg{} users and software) involved in the workflow execution \cite{Costa2013Capturing}.
+
+
+%\section{Motivation: The Workflow Steering Lifecycle}
+
+Moreover, the interaction of users with large-scale CSE experiments can generate major improvements in performance, resource consumption, and quality of results.  
+This idea of putting human intelligence to drive complex computational processes, as is the case of large-scale CSE experiments, is often referred to as ``Human in the Loop'' \cite{jagadish_big_2014}.
+Despite the recent breakthroughs in theory and practice of Artificial Intelligence \cite{russell2016artificial}, the complexity of CSE domains makes human knowledge critical for making decisions during an experiment run. Thus, as highlighted in a recent Department of Energy (DOE) report, putting humans in the loop of CSE experiments is still an open problem~\cite{deelman_future_2017}.
+
+\textit{User steering} (also known as \textit{computational steering}) is a powerful concept meaning that users are enabled to interactively and dynamically drive a computational process while it is still running (\ie{} online, at runtime, during execution).  In workflows, \textit{workflow steering} is the ability that allows users to interactively analyze (\eg{} inspect, visualize, monitor) or adapt (\eg{} tune parameters, change input datasets) the workflow data online \cite{Mattoso2015Dynamic, Souza2017Data}. We call \textit{user steering actions}
+the individual user interactions performed during workflow steering, like asking a monitoring query (in case of \textit{online data analysis}) or tuning a parameter (in case of \textit{online data adaptation}).
+The goal of workflow steering is to anticipate anomalous behavior and to intervene in the workflow execution aiming at achieving a satisfactory execution. 
+The user knows what a ``satisfactory execution'' means. Some examples of satisfactory executions are the ones that generate results with high accuracy, low error, high data quality, or simply the ones that execute timely and successfully.
+
+The \textit{workflow steering lifecycle} is given by:
+(i) analyzing the workflow data;
+(ii) choosing what, when, how to adapt; 
+(iii) adapting the workflow data; and
+(iv) analyzing the workflow data again to investigate the consequences of the adaptation and returning to the first step until the end of the workflow execution.
+
+Often, one steering action is not enough hence requiring several steering actions to be performed by the users. They repeatedly monitor, fine-tune parameters or perform multiple other steering actions.
+Every single steering action generates \textit{user steering action data}, which are important information that helps to understand the steering actions and their influence on the workflow data. They consist of data informing: \textit{when} the action happened, \textit{why} the user decided to act, \textit{how} the action occurred, \textit{which} workflow data were analyzed or adapted, \textit{what} was happening before and after the action, \textit{who} acted, and the type of the action itself. The \textit{track of steering actions} is a historical record containing important information that allows understanding the steering actions and their influence on the workflow data, \ie{} it is the steering action data properly related to the rest of the workflow data.
+
+However, such steering action data generated at each action are typically not recorded nor are they explicitly related to the rest of the workflow data. 
+Because of this, it is very easy to lose track of the actions, even for experienced users,
+especially considering the huge amount of data, parallel processing, complex algorithms and software.
+If users cannot track their steering actions, they find harder to understand how and what needs to be steered, steer in a misleading way (\eg{} they can unintentionally tune the same parameter twice), it can be harder to explain results that were consequences of steering actions, and it can be impossible to reproduce the results, jeopardizing the overall experiment and failing to support the workflow steering lifecycle. 
+Therefore, a critical aspect in the workflow steering lifecycle is to allow for tracking user steering actions to enable users to understand how their steering actions are influencing a running workflow. With such understanding, users have more information available to help them to steer.
+The importance of allowing for tracking the interaction of users with large-scale workflows has been highlighted in several surveys~\cite{deelman_future_2017,F.daSilva2017characterization,Atkinson2017Scientific,Netto2018HPC}.
+
+In our extensive literature review (Chapter \ref{chap3}), we find that the state-of-the-art in the context of supporting CSE experiments lacks concepts and techniques to allow for tracking steering actions in large-scale workflows, which would significantly assist in understanding the steering actions online, which is critical to support the workflow steering lifecycle. 
+As a result, users are left to register the track manually by, for instance, annotating in a separate digital spreadsheet or even in a sheet of paper. Thus, the track is often incomplete, isolated from the workflow data, and not stored in a structured way, which would facilitate data analysis. 
+Therefore, the general problem this thesis addresses is: ``how to allow for tracking user steering actions in large-scale workflows?''.
+This is hard because to allow for tracking steering actions, steering action data must be managed, which means \textit{to capture the steering action data, relate them to the workflow data accordingly, and store in a database ready for online data analysis}. There are several challenges associated with managing steering action data. We can group them as follows.
+
+\begin{enumerate}[label=(\Roman*),itemsep=0pt]
+
+    \item \textit{Steering actions characteristics}.
+    Considering the complexity of the data, the computational tools, methods and software used or developed by the computational scientists and engineers, how to characterize: how users interact with the workflow data, what constitutes the steering action data, and the data relationships between the actions and the rest of the workflow data?
+
+    \item \textit{Enabling the capture and queries}.
+    How to capture the steering action data in a running large-scale workflow and build a database with the steering actions related to the workflow data so users can query it online?
+
+    \item  \textit{Efficient capture}.
+    Since attaining high performance in the workflow executions is an essential requirement in CSE, how to manage steering action data while not adding significant execution overhead to the already long execution even in HPC?
+
+\end{enumerate}
+
+The general hypothesis of this thesis is that by 
+managing user steering action data,
+users can track their actions, which enables online analysis of the steering action data, hence allowing users to understand how their steering actions are influencing a running workflow. 
+Since provenance data management techniques and concepts have been successfully explored to support user steering even in CSE \cite{Silva2017Raw, Silva2018Capturing, souza_keeping_2019}, we could use provenance for the management of user steering action data. 
+We can further distinguish user steering action data management between two important aspects: one is to capture steering actions, create the explicit data relationships with the workflow data, and store in a database for online analysis; and the other is to do this while incurring low overhead for efficient performance of the workflow execution. Furthermore, our hypothesis encompasses the two typical ways CSE users conduct their experiments
+on large-scale computers, \ie{} using workflow scripts and WMSs. 
+To validate this hypothesis, we propose 
+\textit{Workflow Steer} (WfSteer), an approach that leverages provenance data to manage user steering action data in large-scale workflows.
+It resulted from a combination of new concepts, techniques, definitions, and design principles for the management of user steering action data with low execution overhead. More specifically, we can list the following contributions.
+
+\begin{enumerate}[label=(\Roman*),itemsep=0pt]
+
+    \item 
+    A characterization of user steering actions and steering action data, which are the two main concepts introduced in this thesis, along with their corresponding definitions, and definitions on how steering action data explicitly relate to workflow data.
+    We also introduced provenance data management concepts, the notion of provenance of steering actions, and a corresponding data diagram to model steering action data following a widely adopted standard, the W3C PROV. This data diagram gives the data structure for any workflow database that can persist steering action data. Such concepts and definitions can be utilized by workflow scripts or in WMS.
+
+    \item
+    Distributed systems techniques to manage steering action data when users steer a running large-scale workflow, considering the specific requirements for workflow scripts and WMS.
+
+    \item Design principles to maintain low execution overhead while managing steering action data.
+    These principles can be adopted by steering action data management software engineers for building rich workflow databases while adding low execution overhead.
+
+\end{enumerate}
+
+
+We organize the validation of our hypothesis by considering its two aspects (\ie{} to allow for tracking actions and doing it with low execution overhead).
+For this, we carry out two classes of experiments: one class is to qualitatively investigate whether WfSteer allows for tracking steering actions, using real-world workflows as driving use cases; and the other is to quantitatively evaluate the added data capture overhead.
+Additionally, since the hypothesis encompasses both workflow scripts and WMS, within each class of experiments we design and build two instances of WfSteer: one, called DfAdapter,
+is to support users who use scripts to conduct their experiments;
+and the other, implemented within a WMS, is to support WMSs' users.
+Then, through the practical use of WfSteer using these two instances in real use cases running on large HPC machines,
+among many other findings,
+we found that WfSteer in the WMS enabled users to understand how input data were reduced online to yield reduction of 32.4\% of the total execution time, hence significantly saving resources; and that DfAdapter allowed users to understand which parameters were tuned that made the workflow finish successfully without memory overflow.
+We also found that design principles to implement WfSteer, both for scripts and WMS, helped to maintain the execution overhead as low as 1\%.
+
+
+\noindent \textbf{Thesis Organization.}
+During the course of this thesis, some scientific papers in the context of supporting user steering in large-scale workflows have been published \cite{
+souza_keeping_2019,
+Souza2017Data,
+silva_adding_2018,
+Souza2018Provenance,
+souza_efficient_2019,
+Souza2016Online,
+Souza2017Tracking,
+souza_towards_2018,
+Souza2017Spark,
+Souza2015Parallel,
+Silva2018Capturing,
+Silva2016Integrating}, among which the papers SOUZA \textit{et al.} \cite{Souza2017Data,Souza2018Provenance,souza_keeping_2019} compose the core contribution of this thesis and drive its organization.
+In addition to this introduction, the remainder of this manuscript is organized as follows.
+First, in Chapter \ref{chap2}, we present the background for this thesis,
+\ie{} user steering in large-scale workflows in CSE. We present the fundamental concepts,
+terminology, details on how CSE users conduct their experiments using scripts or WMSs,
+and characterize the scientists and engineers in CSE.
+Second, in Chapter \ref{chap3}, we show a thorough literature review on
+user steering support from a data analysis perspective.
+It is a first of this kind that investigates approaches both for WMSs and scripts in CSE.
+Third, in Chapter \ref{chap4}, we introduce WfSteer, our theoretical framework.
+Forth, in Chapter \ref{chap_dfadapter}, we present DfAdapter, one of our implementations of WfSteer. We explain its design decisions, general architecture, and implementation details on managing steering action data in scripts.
+Fifth, in Chapter \ref{chap_dchiron}, we present our implementation in d-Chiron WMS, as another implementation of WfSteer.
+Sixth, in Chapter \ref{chap6}, we present the experiments that support the validation of this thesis's hypothesis.
+Finally, in Chapter \ref{chap7}, we conclude this thesis by sharing lessons learned and proposals for future work.
+
+
+  

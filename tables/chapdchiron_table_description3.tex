@@ -1,0 +1,22 @@
+\begin{table}[H]
+\caption{\codefont{Monitoring\_Query\_Result} table description.}
+\label{tab:dchirontab3}
+\begin{tabular}
+{
+m{.3\textwidth}|
+m{.65\textwidth}
+}
+\Xhline{4\arrayrulewidth}
+\rowcolor{TableHeaderColor}
+\textbf{Column Name} &                  \textbf{Description}                                     \\
+\Xhline{3\arrayrulewidth}
+\codefont{monitoring\_query\_id}                      & Auto increment identifier.                                                  \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{monitoring\_id}                   & Relationship with the monitoring query that generated this result.    \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{monitoring\_values}                   & Results of the \codefont{monitoring\_query}.                          \\
+\Xhline{0.1\arrayrulewidth}
+\codefont{result\_type}                         & Data type of the result values of both queries. Currently, ``Integer", ``Double", ``Array". \\
+\Xhline{4\arrayrulewidth}
+\end{tabular}
+\end{table}

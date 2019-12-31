@@ -1,0 +1,27 @@
+
+\begin{table}[H] 
+\caption{Examples of interactive data analysis integrating domain, exeuction, and provenance data.}
+\label{tab:queries2}
+\footnotesize
+\begin{tabular}{
+m{.05\textwidth}
+m{.87\textwidth}
+}
+\Xhline{4\arrayrulewidth}
+
+\text{}\createQ{Q5}&
+Determine the average of each environmental conditions (output of 
+\codefont{Data Gathering} --- $DT_1$) associated to the tasks that are taking more than the double of the average execution time of \codefont{Curvature Critical Case Selection} -- $DT_5$), grouping the results by the machines (hostnames) where the tasks of $DT_5$ were executed.
+\\ 
+\hline
+\text{}\createQ{Q6}&
+Determine the finite element meshes files (output of \codefont{Preprocessing} --- $DT_2$) associated to the tasks that are finishing with error status.
+\\
+\hline
+\text{}\createQ{Q7}&
+List status information about the 5 computing nodes with the greatest number of \codefont{Preprocessing} tasks that are consuming data elements that contain wind speed values greater than 70 km/h.
+\\
+
+\Xhline{4\arrayrulewidth}
+\end{tabular}
+\end{table}

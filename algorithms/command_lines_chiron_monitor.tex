@@ -1,0 +1,20 @@
+\noindent\begin{minipage}[t]{1.0\linewidth}
+\begin{lstlisting}[
+    language=sh,
+    caption={\codefont{WfSteerCtl} command line interface for monitoring.},
+    label={listing:dchiron-commandline-steer}
+]
+$> WfSteerCtl --monitor --start
+    Output: Ready to accept new monitoring queries.
+$> WfSteerCtl --monitor --add --mq="`cat q1.sql`" --label="q1" --interval=30
+    Output: Monitoring query q1 will be executed every 30 seconds.
+$> WfSteerCtl --monitor --add --mq="`cat q2.sql`" --label="q2" --interval=20
+    Output: Monitoring query q2 will be executed every 20 seconds.
+$> WfSteerCtl --monitor --update --label="q2" --interval=5
+   Output: Monitoring query q2 was updated. It will be executed every 5 seconds.
+$> vi q1.sql
+$> WfSteerCtl --monitor --update --label="q1" --mq="`cat q1.sql`"
+    Output: Monitoring query q1 was updated.
+
+\end{lstlisting}
+\end{minipage}

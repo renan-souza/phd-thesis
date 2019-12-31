@@ -1,0 +1,125 @@
+\documentclass[dsc,numbers]{coppe}
+
+\usepackage[disable]{todonotes}
+\usepackage{xargs}
+%\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+
+\usepackage{algorithmic}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{listings}
+
+%\usepackage[portuguese]{babel}
+
+\usepackage{hyperref}
+\usepackage{imakeidx}
+\usepackage{letterspace}
+\usepackage{soul}
+\usepackage{mfirstuc}
+
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{supertabular}
+\usepackage{float}
+\usepackage{xcolor,colortbl}
+\usepackage{makecell}
+
+\usepackage[justification=centering]{caption}
+
+%\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsthm}
+
+\usepackage{siunitx}
+\sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
+
+\MFUnocap{in}
+\MFUnocap{or}
+\MFUnocap{of}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\include{macros}
+
+\makeindex
+\makelosymbols
+\makeloabbreviations
+
+
+\begin{document}
+
+
+  \title{\thesistitle{}}
+  \foreigntitle{\thesistitlept}
+  \author{Renan Francisco Santos}{Souza}
+  \advisor{Prof\textsuperscript{a}.}{Marta Lima de Queir\'os}{Mattoso}{D.Sc.}
+  \advisor{Prof.}{Patrick}{Valduriez}{Dr.}
+
+%   \examiner{Prof\textsuperscript{a}.}{Marta Lima de Queir\'os Mattoso}{D.Sc.}
+%   \examiner{Prof.}{Patrick Valduriez}{Dr.}
+  \examiner{Dr.}{Marco Aurelio Stelmar Netto}{Ph.D.}
+  \examiner{Prof.}{Alexandre de Assis Bento Lima}{D.Sc.}
+  \examiner{Prof\textsuperscript{a}.}{Vanessa Braganholo Murta}{D.Sc.}
+  \examiner{Prof\textsuperscript{a}.}{Lúcia Maria de Assumpção Drummond}{D.Sc.}
+
+  \department{PESC}
+
+  \date{12}{2019}
+
+  \keyword{User Steering}
+  \keyword{Data Provenance}
+  \keyword{Large-scale Workflows}
+
+  % Do not comment these two below
+  \maketitle
+  \frontmatter
+
+
+
+   %\include{chapters/extras/dedic}
+  \include{chapters/extras/thanks}
+  \include{chapters/extras/resumo}
+  \include{chapters/extras/abstract}
+  \tableofcontents
+  \listoffigures
+  \listoftables
+  %\printlosymbols % glossary
+  \printloabbreviations
+
+   % Do not comment mainmatter
+   \mainmatter
+
+
+
+  \include{chapters/chap01}
+  \include{chapters/chap02}
+  \include{chapters/chap03}
+ \include{chapters/chap04}
+
+  \include{chapters/chap_DfAdapter}
+  \include{chapters/chap_dChiron}
+
+  \include{chapters/experiments/index}
+  \include{chapters/chap07}
+
+
+
+
+  \backmatter
+  \bibliographystyle{coppe-unsrt}
+  \bibliography{thesis}
+
+  %\appendix
+  %\include{chapters/extras/one-page}
+
+  %\include{chapters/extras/todo_notes}
+
+
+\end{document}

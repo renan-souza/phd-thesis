@@ -1,0 +1,47 @@
+\section{Adaptive Monitoring Concepts}
+\label{sec_adaptive_monitoring_concepts}
+
+In this section, we present an adaptive monitoring approach that
+combines monitoring and adaptation. 
+It helps users following the
+evolution of the workflow data being generated during execution, interesting parameters, QoIs, and result data. Since what
+users find interesting may change over time, this approach allows the
+user to adapt the monitoring definitions, such as which data should be
+monitored and how.
+The adaptive monitoring relies on online queries to
+the continuously populated workflow database. Users can set up
+queries (such as the ones in Tables \ref{tab:queries1} and \ref{tab:queries2}) to monitor the data, analyze monitoring results, and
+adapt monitoring settings.
+
+Monitoring works as follows. There is a query set $QS$ composed of
+monitoring queries $q_i$, 
+$0 \leq i \leq |QS|$,
+each one to be
+executed at each $\Delta t_i > 0$ time intervals. Users do not need to
+specify queries at the beginning of the execution, since they do not know
+everything they want to monitor. This is why $QS$ starts empty.
+
+After users gain insights from the data, after interactive 
+data analyses, they can add monitoring queries to $QS$ in an
+\textit{ad-hoc} manner. 
+Each $\Delta t_i$ can be adapted, meaning that users
+have control of the time frame of each $q_i$ during
+execution. The monitoring queries and settings are stored in the
+workflow database.
+
+Each $q_i$ execution generates a monitoring query result set $qr_{it}$, $t = \{k\Delta t_i | k \in \mathbb{N}_{\geq 0}\}$, at each
+time interval $\Delta t_i$. This result set is also stored in the
+workflow database.
+The users have the flexibility to adapt the monitoring during
+workflow execution. To do so, at each time instant $t$ after each
+monitoring query result $qr_{it}$ has been generated,
+the values for $\Delta t_i$ and $q_i$ are reloaded from the
+workflow database. If any change has happened, it will be considered in the
+next iteration $t + \Delta t_i$.
+Moreover, at each certain time during
+execution (also configured by the user), there is a check to verify if the user
+has added new monitoring queries in $QS$. This approach takes 
+advantage of the data stored online in the workflow database to enable users
+to adapt monitoring settings, including which data will be monitored and
+how.
+

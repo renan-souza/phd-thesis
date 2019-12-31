@@ -1,0 +1,14 @@
+\begin{foreignabstract}
+
+
+Computational Science and Engineering (CSE) workflows are large-scale, require High Performance Computing (HPC) execution, and have the exploratory nature of science.
+During the long run, which often lasts for hours or days, users need to steer the workflow by dynamically analyzing it and adapting it to improve the quality of results or to reduce the execution time. 
+However, to steer the workflow, users typically perform several interactions (called \textit{user steering actions}), which need to be tracked.
+Otherwise, users find it harder to understand how and what needs to be steered, they can steer in a misleading way, it can be difficult to explain the results that were consequences of their actions, and it can be impossible to reproduce the results.
+This thesis addresses this problem by proposing an approach that defines the fundamental concepts for user steering action; introduces the notion of provenance of steering actions; and contemplates a W3C PROV-compliant data diagram to model steering action data with provenance.
+Also, the approach presents system design principles to enable the management of steering action data by capturing, explicitly relating the actions to the rest of the workflow data, and storing these data efficiently.
+Two instances of this approach were designed and built: one is a lightweight tool to be plugged into parallel scripts and the other is to be used within a Parallel Workflow Management System, which are the two typical ways to conduct CSE experiments in HPC.
+Using real use cases in the Oil and Gas industry, the experiments show that the proposed approach enables users to understand how their actions directly affect the workflow results at runtime and that the system design principles were essential to add 
+negligible overhead to the HPC workflows.
+
+\end{foreignabstract}

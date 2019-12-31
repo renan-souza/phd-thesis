@@ -1,0 +1,27 @@
+
+\begin{table}[H]
+\caption{
+The added overhead in the analysis and adaptation points account for less than 1\%; data extraction account for 1.49\%.
+}
+\label{tab:libmeshsed_overhead}
+\begin{tabular}{
+M{.14\textwidth}
+M{.45\textwidth}
+M{.16\textwidth}
+M{.16\textwidth}
+}
+\Xhline{4\arrayrulewidth}
+\rowcolor{TableHeaderColor}
+                                     &                                           & \textbf{Total CPU time (s)} & \textbf{Total time (\%)}       \\
+\Xhline{3\arrayrulewidth}
+
+                                     & \textbf{Application computation $comp(Df)$}          & 1,407,967.18                & 98.18\%                      \\ \Xhline{0.5\arrayrulewidth}
+\multirow{2}{*}{\textbf{Analysis}}   & \textbf{Analysis points $anl_{point}(Df)$}                       & 4,259.18                    & 0.3\%                        \\
+                                     & \textbf{Data extraction $ext(Df)$}                   & 21,367.60                   & 1.49\%                       \\ \Xhline{0.5\arrayrulewidth}
+\multirow{2}{*}{\textbf{Adaptation}} & \textbf{Adaptation point  $adp_{point}(Df)$}       & 473.24                      & 0.03\%                         \\
+                                     & \textbf{Action $action(Df)$}      & 2.44                        & 1.75e-5\%                    \\ \Xhline{0.5\arrayrulewidth}
+                                     & \textbf{Total $c(Df)$}                               & 1,434,069.64                & 100\%                        \\
+ \Xhline{4\arrayrulewidth}
+
+\end{tabular}
+\end{table}

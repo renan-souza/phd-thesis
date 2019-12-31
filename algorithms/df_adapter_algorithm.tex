@@ -1,0 +1,54 @@
+\begin{algorithm}
+  \DontPrintSemicolon
+  \begin{small}
+  \KwIn{
+  
+  $I_{DS}$: The input dataset in the dataflow containing the parameters to be tuned.
+  
+  $\eta$: key-value data structure containing the parameters and their new values.
+  
+  $C <\text{optional}>:$ criteria to specify the data element that is being adapted.
+  
+  $\mu <\text{optional}>:$ metadata about the steering action, such as annotations.
+  }
+
+
+import data\_capture\_api\;
+
+$\theta \leftarrow \varnothing$\;
+$\xi  \leftarrow \varnothing$\;
+$\Gamma \leftarrow $ data\_capture\_api.get\_running\_tasks()\;
+$U \leftarrow $ data\_capture\_api.get\_user()\;
+$t \leftarrow $ data\_capture\_api.get\_current\_wall\_time()\;
+$current\_data\_element \leftarrow $ data\_capture\_api.get\_element$(I_{DS},C)$\;
+$attribute\_semantics \leftarrow $ data\_capture\_api.get\_semantics$(I_{DS})$\;
+
+\For{\textbf{all key-value pairs} $(p, current\_value)$ \textbf{ in } $current\_data\_element$}{
+    
+    \If{$p \in keys(\eta)$}{
+        $\theta[p] \leftarrow current\_value$\;
+        \If{$p \in attribute\_semantics[L_I] \textbf{ and } \xi=\varnothing$}{
+            \tcp*{Tuning a loop attribute. Get iteration data}
+            $\xi \leftarrow $ data\_capture\_api.get\_current\_iteration\_data$(I_{DS})$
+            
+        }
+    }
+    
+}
+data\_capture\_api.send\_steering\_action\_data$(
+    I_{DS},
+    \eta,
+    C,
+    U,
+    \Gamma,
+    \mu,
+    \xi,
+    t,
+    \theta
+)$
+
+
+  \end{small}
+ \caption{Capturing User Steering Action Data for $Tune$.}
+ \label{alg:alg_tune_operator}
+\end{algorithm}
