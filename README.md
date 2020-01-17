@@ -1,4 +1,4 @@
-# LaTeX template for my PhD Thesis
+# LaTeX sources for my PhD Thesis
 
 Adapted from COPPE/UFRJ LaTex template http://coppetex.sourceforge.net 
 
@@ -19,7 +19,7 @@ Just run:
 
 # PDF
 
-If you just want the PDF, you can get the latest available in: https://github.com/renan-souza/tese-tex/releases/latest
+If you just want the PDF, you can get the latest available in: https://github.com/renan-souza/phd-thesis/releases/latest
 
 # About the thesis
 
