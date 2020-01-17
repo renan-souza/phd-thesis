@@ -42,6 +42,10 @@ Prof. Marta Mattoso -- [Webpage](https://www.cos.ufrj.br/~marta/) <br/>
 Prof. Patrick Valduriez -- [Webpage](http://www-sop.inria.fr/members/Patrick.Valduriez/)  <br/>
 **University:** COPPE/Federal University of Rio de Janeiro, Brazil   [UFRJ](https://ufrj.br/)/[COPPE](http://www.coppe.ufrj.br/)/[PESC](https://www.cos.ufrj.br)   <br/>
 
+# External Links:
+
+- PESC/COPPE/UFRJ website:  https://www.cos.ufrj.br/index.php/pt-BR/publicacoes-pesquisa/details/15/2940
+- Inria HAL website: https://hal.inria.fr/tel-02418022
 
 # Cite
 
