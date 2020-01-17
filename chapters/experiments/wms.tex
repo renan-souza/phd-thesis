@@ -59,8 +59,11 @@ d-Chiron was executed with MySQL Cluster 7.4.9 as its in-memory distributed DBMS
 
 \subsubsection{Running case}
 
-Let us consider the following scenario. Peter is an offshore engineer,
-expert in riser analysis and learned how to set up monitoring, analyze
+Let us consider the following \crossref{clarify if Peter is a real user} 
+synthetic scenario based on a real case in the O\&G industry. 
+A user, say Peter,
+is an offshore computational engineer, 
+expert in riser analysis, and learned how to set up monitoring, analyze
 d-Chiron's workflow database, and use d-Chiron's \codefont{WfSteerCtl} program to steer the workflow.
 In Peter's project, the $Design \text{ } Fatigue \text{ } Factor$ is set to 3 and $service \text{ }
 life$ is set to 20 years, meaning that fatigue life must be at least 60
@@ -170,11 +173,11 @@ and $t=330$ s.
 Similarly, Peter continues to monitor and steer the execution.
 He issues $SA_3$ at $t=370$ s to remove input data with wind speed
 \textless{} 30.5 km/h, making a decrease of 4.9\% in large fatigue life
-(comparing fatigue life in $t=360$ s and $t=390$ s.
+(comparing fatigue life in $t=360$ s and $t=390$ s).
  Then,
 he issues $SA_4$ at $t=430$ s to remove input data with wind
 speed \textless{} 34.5, attaining a decrease of 1.7\% in large fatigue
-life (comparing fatigue life in $t=420$ s and $t=450$ s.
+life (comparing fatigue life in $t=420$ s and $t=450$ s).
 Despite this small decrease, he decides at $t = 520 \text{ }$ to further remove
 data, but with wind speed \textless{} 35.5 km/h. However, no decrease
 greater than 1\% in the large fatigue life values were registered after

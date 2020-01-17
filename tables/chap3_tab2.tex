@@ -1,7 +1,8 @@
 \begin{longtable}
 { 
  M{.17\textwidth}||
- M{.75\textwidth}
+ M{.45\textwidth}|
+ M{.30\textwidth}
 }
 \caption{Comparison of implementation on how the approaches make a CSE application steerable.}
 \label{tab:making_cse_steerable}\\
@@ -12,7 +13,8 @@
  \rowcolor{TableHeaderColor}
 
   \textbf{Approach} &
-  \textbf{How the approach implements steering in a CSE application}
+  \textbf{Making Application Steerable} &
+  \textbf{Communication Implementation}
   \\
  \hline
  \hline
@@ -22,72 +24,92 @@
 \textbf{DfAnalyzer}
 \cite{Silva2017Raw,Camata2018In,silva_dfanalyzer:_2018}
  &
-Manual source code instrumentation. Communication between the user application and the backend is done via HTTP RESTful API calls.
+Manual source code instrumentation. 
+&
+HTTP RESTful API calls.
 \\
 \hline
 
 \textbf{VASE} \cite{Jablonowski1993VASE:}
 &
 Manual source code instrumentation.
-Addition of steerable points in the data
-dependencies of a dataflow. Communication between the user application and the backend is done via simple file-based communication.
+&
+File-based communication.
 \\
 \hline
 
 
 \textbf{SCIRun}  \cite{Parker1995SCIRun:}
 &
-User has to write  a C++ abstract program using the system's structure
+User writes C++ abstract program using the system's libraries
+&
+MPI
 \\
 \hline
 
 
 \textbf{CSE} \cite{Liere1996Computational,Liere1997Computational,Wijk1994Environment}
 &
-User needs to write ``satellites" and plug to their application to communicate with the ``Data Manager"
+User writes ``satellites'' and plug to their application to communicate with the ``Data Manager''
+&
+MPI
 \\
 \hline
 
 \textbf{Progress and Magellan} \cite{Vetter1999Techniques}
 &
-Via manual source code instrumentation, user specifies only relevant data structures (called ``steering object model") to be exposed for steering. The server executes as a separate thread in the same memory space of the application.
+Manual source code instrumentation, user specifies only relevant data structures (called ``steering object model'') to be exposed for steering.
+&
+Separate threads in the same memory space
 \\
 \hline
 
 
 \textbf{CUMULVS} \cite{Kohl2006Cumulvs:}
 &
-Manual source code instrumentation to indicate data dependencies and steerable parameters.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 \textbf{VIPER}  \cite{Rathmayer1997tool}
 &
 Manual source code instrumentation.
+&
+NI
 \\
 \hline
 
 \textbf{MOSS} \cite{Eisenhauer1998Object-based}
 &
-Moss provides high-level  abstractions  for manual source code instrumentation of steerable  data structures and parameters. It provides performance and consistency control studies.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 \textbf{gViz} \cite{Wood2003gViz}
 &
-Manual source code instrumentation via a steering library.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 \textbf{DISCOVER} \cite{Mann2001DISCOVER:}
 &
-Manual source code instrumentation. It supports geographically distributed users steering. It uses MPI for data collectors and adaptors between the running code and the steering server. Uses Java RMI between the server and the UI.
+Manual source code instrumentation
+&
+MPI between the running code and the steering server; and Java RMI between the server and the UI.
 \\
 \hline
 
 \textbf{MoSt} \cite{Glasner2001Monitoring}
 &
-It allows for dynamic source code instrumentation.
+Dynamic source code instrumentation
+&
+NI
 \\
 \hline
 
@@ -95,13 +117,17 @@ It allows for dynamic source code instrumentation.
 
 \textbf{GRASPARC} \cite{Brodlie1993GRASPARC:}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 \textbf{ParaView Catalyst Live} \cite{Ayachit2015ParaView,Bauer2016In}
 &
-Manual source code instrumentation. In time-loop simulations, the simulation data structures are re-mapped at each time step in a time-loop.
+Manual source code instrumentation
+&
+File-based
 \\
 \hline
 
@@ -110,132 +136,170 @@ Manual source code instrumentation. In time-loop simulations, the simulation dat
 \textbf{PathFinder}
  \cite{Reed1996Next}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{Extempore} \cite{Swift2015Live}
 &
-Users need to use a specific programming language.
-Just-in-Time compilation. ``Hot-swapping" or ``live programming" of a main loop.
+User writes in a specific programming language.
+&
+Just-in-Time compilation for ``hot-swapping'' or ``live programming'' of a main loop.
 \\
 \hline
 
 
 \textbf{Cactus} \cite{Goodale2003Cactus}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{EPSN} \cite{Esnard2006Steering}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{pV3} \cite{Haimes1996Concurrent}
 &
-Manual source code instrumentation of a main loop code. It uses API to communicate with the backend.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{RealityGrid} \cite{Pickles2005practical}
 &
-APIs for manual source code instrumentation. It addresses consistency issues. File-based and Socket-based between running application and server. SOAP for messages between client and server.
+Manual source code instrumentation
+&
+SOAP for messages between client and server.
 \\
 \hline
 
 
 \textbf{EPIC} \cite{Kress2016Visualization}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{CS\_Lite}  \cite{Figueira2004CS_LITE:}
 &
-Manual source code instrumentation. It uses socket-based communication between the user application and the backend.
+Manual source code instrumentation
+&
+Socket-based
 \\
 \hline
 
 
 \textbf{I-WAY} \cite{Parashar2005Grid}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{Falcon} \cite{Gu1995Falcon:}
 &
-Manual source code instrumentation. It is concerned with performance, can control overheads, turn on and off each steering point, selective monitoring
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{Autopilot} \cite{Ribler1998Autopilot:}
 &
-Manual source code instrumentation. It is toolkit with data collectors and adaptors.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{WBCSim}  \cite{Goel1999WBCSim:,Shu2011Computational,Shu2006WBCSim:}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{\citet{Yi2014In-situ}}
 &
-File-based implementation.
+Manual source code instrumentation
+&
+File-based
 \\
 \hline
 
 
 \textbf{\citet{Ma2007In-situ}}
 &
-File-based data communication.
+Manual source code instrumentation
+&
+File-based
 \\
 \hline
 
 
 \textbf{\citet{Han2016Hybrid}}
 &
-Manual source code instrumentation.
+Manual source code instrumentation
+&
+NI
 \\
 \hline
 
 \textbf{\citet{Matkovic2011Adaptive}}
  &
-Users need to develop inside a monolithic system
+Users develop in a monolithic system
+&
+NI
 \\
 \hline
 
 
 \textbf{\citet{Butnaru2013Computational}}
 &
-Both non-intrusive and source code instrumentation are provided.
+Both non-intrusive and manual source code instrumentation
+&
+NI
 \\
 \hline
 
 
 \textbf{\citet{Knezevic2011Interactive}}
 &
-Manual source code instrumentation of CSE applications. MPI-based between user steering and the running application. Examples in CFD use cases. \\
+Manual source code instrumentation
+&
+MPI
+\\
 \hline
 
 
 \textbf{\citet{Danani2015Computational}}
 &
-Modification of RealityGrid source code to use the UI inside a HPC machine network. Useful for HPC machines that do not accept external connections, like Blue Gene/Q (the one they used) and Lobo Carneiro.
+Modification of RealityGrid source code to use the UI inside a HPC machine network
+&
+MPI
 \\
 \hline
  
@@ -243,7 +307,9 @@ Modification of RealityGrid source code to use the UI inside a HPC machine netwo
 \textbf{Chiron WMS}
 \cite{Dias2015Data-centric,Goncalves2013Performance,Santos2013Runtime}
 &
-Dataflow-oriented WMS. Non-intrusive. As any WMS, it can conflict with applications that already are parallel.
+Dataflow-oriented WMS; Non-intrusive
+&
+MPI and DBMS-oriented
 \\
 \hline
 
@@ -251,14 +317,18 @@ Dataflow-oriented WMS. Non-intrusive. As any WMS, it can conflict with applicati
 (on top of Nimrod/Kepler WMS)
 \cite{Nguyen2015WorkWays:}
 &
-Science Gateway. Non-intrusive. As any WMS, it can conflict with applications that already are parallel.
+Science Gateway; Non-intrusive
+&
+HTTP RESTful API calls.
 \\
 \hline
 
 
 \textbf{gridMon Steer} (on top of Triana WMS) \cite{Wang2006gridMonSteer:}
 &
-Non-intrusive. As any WMS, it can conflict with applications that already are parallel.
+Non-intrusive.
+&
+NI
 \\
 \hline
 %%%%%%%%%%%%%%%%%%%% END WMS 

@@ -1,8 +1,8 @@
 \documentclass[dsc,numbers]{coppe}
 
-\usepackage[disable]{todonotes}
+\usepackage[disable,colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+% \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 \usepackage{xargs}
-%\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
@@ -62,8 +62,8 @@
   \advisor{Prof\textsuperscript{a}.}{Marta Lima de Queir\'os}{Mattoso}{D.Sc.}
   \advisor{Prof.}{Patrick}{Valduriez}{Dr.}
 
-%   \examiner{Prof\textsuperscript{a}.}{Marta Lima de Queir\'os Mattoso}{D.Sc.}
-%   \examiner{Prof.}{Patrick Valduriez}{Dr.}
+  \examiner{Prof\textsuperscript{a}.}{Marta Lima de Queir\'os Mattoso}{D.Sc.}
+  \examiner{Prof.}{Patrick Valduriez}{Dr.}
   \examiner{Dr.}{Marco Aurelio Stelmar Netto}{Ph.D.}
   \examiner{Prof.}{Alexandre de Assis Bento Lima}{D.Sc.}
   \examiner{Prof\textsuperscript{a}.}{Vanessa Braganholo Murta}{D.Sc.}
@@ -116,9 +116,13 @@
   \bibliographystyle{coppe-unsrt}
   \bibliography{thesis}
 
-  %\appendix
+  \appendix
   %\include{chapters/extras/one-page}
-
+   \crossref{nos apendices -- A2: fez falta uma descrição e mais detalhes do que está disponível no github;  V3: adicionar detalhes do que esta no Github}
+  \include{appendix/sql}
+  \include{appendix/dfadapter}
+  
+  
   %\include{chapters/extras/todo_notes}
 
 

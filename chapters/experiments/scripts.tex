@@ -18,7 +18,7 @@ conclude with an overhead evaluation (Sec. \ref{sec_overhead_eval_wokflow_script
 libMesh-sedimentation provides a real and rich case for parameter tuning for the following reasons. First, it is a CSE application that requires HPC to run a simulation with over 70 parameters, which may be modified by the user for better performance and accuracy of results \cite{Camata2018In}. Second, as this simulation may last for weeks, the user does several tunings and there is no tracking for them. Third, there is a strong potential for richer online data analyses with steering action data by correlating the steering data to domain-specific values (mainly QoIs) and other data in the workflow database.
 
 To use DfAdapter in libMesh-sedimentation, we follow the utilization guide described in Section \ref{dfadapter_utilization}.
-The first step is modeling libMesh-sedimentation simulation as a workflow and identifying analysis and adaptation points. Workflow data are captured by DfAnalyzer. Application-specific data are modeled as new tables of the relational database schema for the workflow database (Sec. \ref{sec:dfadapter_wfschema}).
+The first step is modeling libMesh-sedimentation simulation as a workflow and identifying analysis and adaptation points. Workflow data are captured by DfAnalyzer. Application-specific data are modeled as new tables of the relational database schema for the workflow database (Fig. \ref{fig:dfadapter_wfdbschema}).
 The main input dataset that the user adapts is the input for the loop evaluation data transformation, named \codefont{I\_Iteration\_Params}, which contains input parameters for the numerical solvers. The users specify parameters in a setup configuration file. The workflow script checks, at every time step, if any modification has been made to this file. If a modification occurred, the parameters are redefined according to the new values. That is, libMesh-sedimentation implements a file-based checks approach for the adapter service (Sec. \ref{wfscript_system-design-principles}).
 Modifications in this file happen within an implementation of the Adapter API. The implementation receives parameters and new values and modifies the file according to the inputs.
  The last step is to insert steering action data capture API calls in the adaptation points.
@@ -26,7 +26,7 @@ Modifications in this file happen within an implementation of the Adapter API. T
  Finally, when the user steers, DfAdapter captures provenance, domain and steering action data every time it detects user steering actions.
  Figure~\ref{fig:libmesh_sed_cppode} 
  shows the instrumentation
- of libMesh-sedimentation with workflow data capture calls (using DfAnalyzer's API --- Sec. \ref{dfanalyzer_dfadapter}) and steering action data capture calls.
+ of libMesh-sedimentation with workflow data capture calls (using DfAnalyzer's API --- Sec. \ref{dfadapter-implementation-details}) and steering action data capture calls.
 
 
 \begin{figure}[H]
@@ -101,9 +101,7 @@ that tracks the steering action. The query lists the parameters tuned by a user 
 \end{figure}
 
 
-
-To inspect the consequences of adaptations, a more sophisticated
-analytical query is needed. Figure \ref{fig:q2steering} shows the query results
+Figure \ref{fig:q2steering} shows the query results
 of the average values of strategic quantities ten iterations before and after each of the  fine-tunings. The results include nonlinear and linear (GMRES)
 iterations, which are output values of the solver, and the number of
 finite elements, which is an output of the mesh refinement process and
@@ -146,7 +144,7 @@ have a better understanding of the results.
 
 \subsubsection{Large-scale case}
 
-In a large-scale experiment, the user sets up the libMesh-sedimentation
+In a large-scale experiment, \crossref{A4: faltou descrever qtos nós do LoboC foram usados} using 480 cores of Lobo Carneiro cluster, the user sets up the libMesh-sedimentation
 workflow with a simulation of the deposition of sediments carried by a
 turbidity current over a real experimental channel. A mixture of
 sediments is continuously injected into a channel that deposits

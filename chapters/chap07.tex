@@ -1,7 +1,7 @@
 \chapter{Conclusions} \label{chap7}
 
 In this thesis, we aimed at supporting the workflow steering lifecycle to enable computational scientists and engineers (users) to understand their experiments when they are steering (monitoring, analyzing, adapting) large-scale workflows.
-To address the problem of managing steering action data in large-scale workflows, we proposed WfSteer, an approach that combines new provenance data management concepts, methods, and techniques that allow for tracking steering actions, which is critical to support the workflow steering lifecycle while adding negligible overhead. We designed and built two isntantiations for WfSteer, \ie{} DfAdapter, for workflow scripts, and another in d-Chiron, for applications that can benefit from WMSs, which are the two typical ways users conduct their experiments. In this chapter, we share the lessons we learned (Sec. \ref{lessons}) and future work (Sec. \ref{future}).
+To address the problem of managing steering action data in large-scale workflows, we proposed WfSteer, an approach that combines new provenance data management concepts, methods, and techniques that allow for tracking steering actions, which is critical to support the workflow steering lifecycle while adding negligible overhead. We designed and built two instantiations for WfSteer, \ie{} DfAdapter, for workflow scripts, and another in d-Chiron, for applications that can benefit from WMSs, which are the two typical ways users conduct their experiments. In this chapter, we share the lessons we learned (Sec. \ref{lessons}) and future work (Sec. \ref{future}).
 
 \section{Lessons Learned}
 \label{lessons}
@@ -11,7 +11,7 @@ one is to allow for tracking steering actions by means of managing steering acti
 do this incurring negligible execution overhead.
 In this validation process, we learned several lessons that we share in this section.
 
-For the first aspect, we began with a thorough analysis of the state-of-the-art on user steering in general, extending with an in-depth search in the literature that are not traditionally found in the literature in the context of WMSs, such as \citet{Mattoso2015Dynamic}' survey.
+For the first aspect, we began with a thorough analysis of the state-of-the-art on user steering in general, extending with an in-depth search in the literature extending to approaches with and without WMSs.
 We concluded that the literature lacks techniques and methods to support the management of steering action data, either for WMSs or for parallel computational simulations written as scripts.
 Second, after analyzing how users interact with their CSE experiments, we learned the data that characterizes the \textit{user steering action data}, and how these data are generated when users perform \textit{steering actions}, which are the two core concepts behind WfSteer.
 Finally, we proposed the notion of provenance of steering actions and a provenance data diagram, called PROV-DfA, an extension of the W3C PROV standard, to model provenance of steering action data.
@@ -26,7 +26,7 @@ data capture system can capture when the data change in case of an adaptation
 was solved by specifying how users can wrap
 adapters of their workflow so that the adapter is called, steering action data are
  captured, related, and stored. 
- In the experiments carried out on Lobo Carneiro (up to 6,048 CPU cores) running a real case in Computational Fluid Dynamics in Geoscience for the O\&G industry, we observed that the ability our approach gives to the users for them to have a detailed understanding of their steering actions and the consequences of their actions improves the users' awareness, putting them in the loop
+ In the experiments carried out on Lobo Carneiro cluster running a real case in Computational Fluid Dynamics in Geoscience for the O\&G industry, we observed that the ability our approach gives to the users for them to have a detailed understanding of their steering actions and the consequences of their actions improves the users' awareness, putting them in the loop
 of their simulations. For example, the user can explicitly
 identify that specific fine-tunings he made in the simulation solver
 made the workflow successfully finish without crash and
@@ -84,22 +84,42 @@ the Human-Computer Interaction scientific community could be addressed to enhanc
 the steering support. For example, to interact with our implemented system,
 users need to run command lines to call the adapter or run SQL queries to analyze
 the workflow data. Usable interfaces could potentially improve the users' engagement
-with their own experiment data. Similarly, \textit{in-situ} data visualization techniques
+with their own workflow data. Similarly, \textit{in-situ} data visualization techniques
 \cite{Bauer2016In} could be proposed and extended, which would highly benefit
 the users in understanding their workflow data, combined with the steering action data
 managed by our solution.
-In addition, our techniques and methods are heavily dependent on the users’ knowledge
+
+In addition, our techniques and methods are \crossref{M2: qual seria o tradeoff entre o que é capturado e se permite adaptação desses parâmetros; M3: quais as limitações?} 
+heavily dependent on the users’ knowledge
 to identify correlations between input and output data to determine which data are relevant
 and which subsets of input datasets are interesting or not.
-Furthermore, enriching the workflow database steering action data,
-jointly with provenance, execution, and domain data, enables future interaction
-analysis. In addition to reliability and reproducibility, having such
-data enables users to learn from their own adaptations: they may find
+\crossref{M2: qual seria o tradeoff entre o que é capturado e se permite adaptação desses parâmetros; M3: quais as limitações?  M8: tamanho do future work} 
+While this helps to maintain the workflow database with data that are more likely to be useful for analysis, such dependence on users
+may be considered a limitation. It can be time-consuming to specify the workflows and to a code.
+Thus, solutions to address this problem can be explored in the future.
+\crossref{M8: aumentar trabalhos futuros}
+A possible direction is to use ML techniques to identify 
+potential points of instrumentation in a workflow and then recommend a specification. The issue in this case is that the autonomously identified workflow may either lack details that are important for the users or may add 
+recommend an excessively detailed workflow, which can compromise the understanding of the provenance data. Thus, further studies will require analysis of such trade-off.
+
+Furthermore, in this thesis we have shown that enriching the workflow database with steering action data,
+jointly with provenance, execution, and domain data, enables a new class of interaction data
+analysis.
+In addition to improving the reliability on the generated workflow data and reproducibility, having such
+data potentially enables users to learn from their own adaptations: they may find
 that when they tune certain parameters to a given range of values, the
 convergence of the solver improves by a certain amount.
-Moreover, we believe that managing steering action data jointly with multiworkflow data \cite{souza_efficient_2019} can highly enhance the analytical capabilities in even more complex settings that require several, distributed, heterogeneous workflow executions in CSE.
-Finally, these
+We did not do any further user-based experiment to verify the potential of allowing users to learn from their own interactions.
+
+Moreover, we believe that managing steering action data jointly with multiworkflow data \cite{souza_efficient_2019} can highly enhance the analytical capabilities in even more complex settings that require several, distributed, heterogeneous workflow executions in CSE. \crossref{M8: aumentar trabalhos futuros} Qualitative experiments of such a solution would investigate how the data from multiple, heterogeneous data stores with structured, unstructured, relational or NoSQL databases, can integrate with steering action data.
+
+Also, \crossref{Future work = L2: porque não fazer um monitoramento do ambiente;
+L8: poderia ter como trabalho futuro a interferência do us na configuração do ambiente?; 
+L9: trabalho futuro na cloud; M8: aumentar trabalhos futuros} the test cases we explored in this thesis were conducted on typical HPC machines. We expect that issues such as failure handling and budget constraints to be explored for tracking steering actions while users are steering workflows in a cloud cluster, as new steering actions hence their data can emerge. For this, the performance of cloud environments would need to be monitored and related to the actions, which can  challenging and new user steering action data management techniques (\eg{} data modeling, efficient capture mechanisms in clouds) may be required.
+Finally, all these
 steering action data allow for building AI-based systems that help users
-while they are steering simulations \cite{Silva2018JobPruner:},
+while they are steering simulations \cite{Silva2018JobPruner:} or even do \crossref{M8: aumentar future work}autonomous adaptations
 as they can extend their training database with provenance of
-adaptations.
+adaptations. 
+
+

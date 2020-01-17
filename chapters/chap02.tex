@@ -18,26 +18,32 @@ This section briefly describes the basic concepts and terminology used in this t
 
 \subsubsection{Workflow}
 
-CSE experiments are characterized by the execution of one or more CSE applications, which are software that implement complex algorithms and process large volumes of scientific data in large-scale computers.
-These CSE applications can be modeled using a \textit{scientific workflow} (also known as \textit{large-scale workflow} or \textit{workflow}, for short) abstraction.
-Modeling CSE applications as workflows contributes to the overall CSE experiment because it makes explicit the workflow data, which need 
+CSE experiments are characterized by the execution of one or more CSE applications, which are software that implement complex algorithms and process large volumes of scientific data in large-scale computers \cite{Rude2016Research}.
+These CSE applications can be modeled using a \textit{scientific workflow} (also known as \textit{large-scale workflow} or \textit{workflow}, for short) abstraction
+\cite{Bernholdt2017Improving, Bauer2016In, F.daSilva2017characterization}.
+Modeling CSE applications as workflows contributes to the overall CSE experiment because it makes the workflow data explicit, which need 
 to be analyzed and potentially adapted.
-In this thesis, we use the term \textit{workflow} as an abstract concept that means a composition of pieces interconnected through data. In traditional workflow literature, these pieces are usually called \textit{workflow activities}, or \textit{activities} for short \cite{F.daSilva2017characterization}. When concretized, an activity can be either a black-box program, program functions, methods, or blocks of code in a script, depending on the CSE applications being modeled as a workflow.
+In this thesis, we use the term \textit{workflow} as an abstract concept that means a composition of pieces interconnected through data. In traditional workflow literature, these pieces are usually called \textit{workflow activities}, or \textit{activities} for short  
+When concretized, an activity can be either a black-box program, program functions, methods, or blocks of code in a script, depending on the CSE applications being modeled as a workflow \cite{F.daSilva2017characterization, Silva2017Raw, Souza2017Data, Ikeda2013Logical}.
 
 \subsubsection{The Two Ways CSE Users Conduct their Experiments: Workflow Scripts and WMSs}
 
 In this thesis, we consider the two typical ways that CSE users conduct their experiments on large-scale computers.
 
-One way is by developing \textit{parallel CSE workflow scripts}, or \textit{workflow scripts} for short. These scripts execute a sequence of computing commands that typically invoke highly parallel libraries for data processing or performing complex computations.
+\crossref{V6: fez falta usar artigos clássicos para referendar diversas afirmações}
+One way is by developing \textit{parallel CSE workflow scripts}, or \textit{workflow scripts} for short. These scripts execute a sequence of computing commands that typically invoke highly parallel libraries for data processing or performing complex computations \cite{Bernholdt2017Improving, Bauer2016In}.
 
 The other way is by using \textit{WMSs}, like Chiron \cite{Ogasawara2011algebraic}, Kepler \cite{Nguyen2015WorkWays:}, and Pegasus \cite{Deelman2015Pegasus}.
-Differently than the previous way, where CSE users write their own scripts to control the parallelism of their applications, when using a WMS, users typically rely on it to manage the parallel execution of their applications. Cases for WMSs are executions of scientific software that process the same computation over large datasets in parallel, commonly searching for a solution in a large solution space, as a parameter sweep in an embarrassingly parallel execution exploiting data parallelism.
+Differently than the previous way, where CSE users write their own scripts to control the parallelism of their applications, when using a WMS, users typically rely on it to manage the parallel execution of their applications. Cases for WMSs are executions of scientific software that process the same computation over large datasets in parallel, commonly searching for a solution in a large solution space, as a parameter sweep in an embarrassingly parallel execution exploiting data parallelism
+\cite{F.daSilva2017characterization, Silva2017Raw, Souza2017Data}.
 
 \subsubsection{Workflow Data and Dataflow}
 
 When modeling the workflows, the CSE users specify the \textit{workflow data}, which are the data processed (\ie{} consumed and generated) during the workflow execution, like scientific data files and parameters for the algorithms or numerical methods.
 
-The workflow data are organized as \textit{datasets} and the activities operate over the data to \textit{transform} them. Thus, in a workflow execution, \textit{input datasets} are consumed by \textit{data transformations} that produce \textit{output datasets}, which can be consumed by subsequent data transformations, forming a \textit{dataflow}.
+The workflow data are organized as \textit{datasets} and the activities operate over the data to \textit{transform} them. Thus, in a workflow execution, \textit{input datasets} are consumed by \textit{data transformations} that produce \textit{output datasets}, which can be consumed by subsequent data transformations, forming a \textit{dataflow}
+\cite{Silva2017Raw, Souza2017Data}
+.
 
 
 \subsubsection{User Steering}
@@ -55,8 +61,8 @@ When users steer, they generate \textit{user steering action data}, which are im
 
 The \textit{track of steering actions} is a historical record containing important information that allows understanding the steering actions and their influence on the workflow data. In other words, it is the steering action data properly related to the rest of the workflow data.
 
-\textit{To track steering actions}
-is to query (or analyze) the track of a steering action.
+\textit{To track a steering action}
+is to query (or analyze) its track, \ie{} its historical record.
 
 To \textit{allow for tracking steering actions}, one needs to \textit{manage steering action data}, which means \textit{to capture the steering action data, explicitly relate them to the workflow data, and store in a database ready for online queries.}
 
@@ -88,10 +94,10 @@ Data management in workflows is critical due to the inherent complexity of
 the scientific domain data and the HPC requirements, \eg{}
 the exploitation of data parallelism.
 For steering, it is essential because it makes explicit the workflow data, which need to be analyzed and steered by the CSE users.
-In this section, we provide the theoretical background for a ``dataflow-oriented approach for workflows".
+In this section, we provide the theoretical background for a ``dataflow-oriented approach for workflows''.
 It has been been proposed by \citet{Silva2017Raw}, influenced by \citet{Ikeda2013Logical} and \citet{Ogasawara2011algebraic},
 and has been refined and extended in the publications that compose this thesis.
-It gives the theoretical foundation for this thesis and is the basis for the formal definition of \textit{``user steering action"}, to be defined in the following chapters.
+It gives the theoretical foundation for this thesis and is the basis for the formal definition of \textit{``user steering action''}, to be defined in the following chapters.
 
 The dataflow-oriented approach provides constructs whose essence is to promote to first-class-citizens
 the elements of data flowing throughout the
@@ -111,7 +117,7 @@ Datasets are further specialized into \textit{Input Datasets} ($I_{DS}$) and \te
 
 \begin{mydef}{def:schema}{Data schema and attributes}
 Data elements in a dataset $DS$ have a data schema $\mathbb{S}(DS) = \{a_1,...,a_u\}$,
-where each element data value $v_j$  has an attribute $a_j$, $1 \leq j \leq u $.
+where each element data value $v_j$  is associated with an attribute $a_j$, $1 \leq j \leq u $.
 Thus, a data element can also be represented as a set of ordered pairs $\{(attribute,value)\}$, s.t.,
 $e_i = \{(a_1,v_1),..., (a_u,v_u)\}$.
 Moreover, attributes have a data type (\eg{} numeric, textual, array).
@@ -163,7 +169,7 @@ where:
   $L_I$ contains attributes used by an iteration loop, \emph{i.e.},
   used for data transformations that evaluate a loop;
 \item[-] \noindent
-  $L_O$ contains output values especially related to an iteration
+  $L_O$ contains attributes for output values especially related to an iteration
   in case of data transformations that evaluate a loop; and
 \item[-] \noindent
   $C_O$ contains attributes for any output values that are explicit
@@ -216,7 +222,7 @@ using a WMS to manage their applications. In Section \ref{subsec_scripts}, we pr
 
 Writing and executing CSE applications in workflow scripts is one of the two typical ways CSE users automate the execution of their CSE experiments in large-scale computers.
 This way is typically followed by CSE users who are experts in programming complex scientific computing tools, like numerical solvers.
-The notion of ``script" used in this thesis means that it a sequence of computational steps, developed by CSE users, which automates a batch execution of a CSE experiment on an HPC machine. These scripts can be written in a scripting language, like Python or Shell, or a compiled language.
+The notion of ``script'' used in this thesis means that it is a sequence of computational steps, developed by CSE users, which automates a batch execution of a CSE experiment on an HPC machine. These scripts can be written in a scripting language, like Python or Shell, or a compiled language.
 However, as described by \citet{Silva2018Capturing}, the software ecosystem for developing these applications involves
 more than writing scripts or invoking a chain of legacy scientific
 codes.
@@ -267,7 +273,7 @@ libMesh interfaces with several libraries for Computational Science and Engineer
 Also, scientific visualization tools like ParaView \cite{Ayachit2015ParaView},
 are used to help to gain insight from the computations.
 The resulting application can be seen as an iterative workflow, implemented as a script.  
-In applications like liMesh-sedimentation, users typically set up
+In applications like libMesh-sedimentation, users typically set up
 the QoIs and several parameters for the numerical methods. Examples of
 parameters are tolerances for linear and nonlinear solvers, number of
 levels for mesh adaptation, tolerances for space and time error
@@ -298,7 +304,7 @@ Figure \ref{fig:libmesh} shows the libMesh-sedimentation solver modeled as an it
 \label{subsec_blackbox}
 
 Using a WMS is the other way for automating the execution of CSE experiments in large-scale computers. Good cases for WMSs
-comprise experiments that are characterized by the execution of a same program or chaining of programs to process a very large dataset. Usually, each individual execution of one of these programs is not parallel, so to speed up the processing of the datasets, one can exploit data parallelism on an HPC machine. This kind of parallel execution is called embarrassingly parallel and is often found in \textit{Parameter Sweep workflows} \cite{F.daSilva2017characterization}.
+comprise experiments that are characterized by the execution of a same program or chaining of programs to process a very large dataset. Usually, each individual execution of one of these programs is not parallel, so to speed up the processing of the datasets, one can exploit data parallelism on an HPC machine \cite{F.daSilva2017characterization}.
 Applications with these characteristics can highly benefit from the
 efficient parallel execution control provided by WMSs because since there is no parallelism within workflow activity being managed by the WMS, the competition for computing resources is significantly reduced.
 Also, WMSs provide mechanisms that facilitate the modeling of the data transformations and the dataflow and many WMSs already provide provenance data management mechanisms. \cite{Mattoso2015Dynamic}.
@@ -409,7 +415,7 @@ computational simulations.
 They know how to analyze domain-specific data and organize large raw data files into analyzed data so
 they can work together with domain specialists to interpret the
 data.
-They know how to chain the different data transformations
+They know how to chain the different data transformations and
 design a workflow to attend the main goal of a CSE experiment.
 They can also operate WMSs or dispatch jobs in an HPC cluster.
 
@@ -432,14 +438,25 @@ the system, debugging, and fixing errors.
 
 There are at least six aspects of computational steering in scientific workflows: online analysis, monitoring, adaptation, notification, interface for interaction, and computing model \cite{Mattoso2015Dynamic}. Despite the importance of them all, the first three are essential and are the ones this thesis focuses on.
 Online adaptations driven by the user is at the core of user steering.
- However, users will only know how to fine-tune parameters or which subset needs further focus if they can explore partial result data during a long-lasting execution.  The \textit{workflow steering lifecycle} is therefore given by:
+ However, users will only know how to fine-tune parameters or which subset needs further focus if they can explore partial result data during a long-lasting execution.  The \textit{workflow steering lifecycle} (Figure \ref{fig:wfsteeringlifecycle}) is therefore given by:
+    (i) analyzing the workflow data online;
+    (ii) choosing what, when, how to adapt; 
+    (iii) adapting the workflow data online; and
+    (iv) analyzing the workflow data again to investigate the consequences of the adaptation and returning to the first step until the end of the workflow execution.
+ 
+%  \begin{enumerate}[label=(\roman*),itemsep=0pt]
+%     \item Analyzing the workflow data online;
+%     \item Choosing what, when, how to adapt; 
+%     \item Adapting the workflow data online; and
+%     \item Analyzing the workflow data again to investigate the consequences of the adaptation and returning to the first step until the end of the workflow execution.
+%  \end{enumerate}
 
- \begin{enumerate}[label=(\roman*),itemsep=0pt]
-    \item Analyzing the workflow data online;
-    \item Choosing what, when, how to adapt; 
-    \item Adapting the workflow data online; and
-    \item Analyzing the workflow data again to investigate the consequences of the adaptation and returning to the first step until the end of the workflow execution.
- \end{enumerate}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/wflifecycle.pdf}
+    \caption{Workflow Steering Lifecycle.}
+    \label{fig:wfsteeringlifecycle}
+\end{figure}
 
 In this section, we explain how users can steer the workflow based on data management techniques.
 A major issue to manage data in CSE is to address the different types of data that need to be managed.
@@ -476,7 +493,7 @@ completed); program to be executed, its version, versioning information; command
 if any; and any other data that can be used to improve the steering capabilities.
 
 \item \textit{Computing nodes that will execute the tasks.} This category refers to where each task will be executed,
-\ie{} which computing node will process it. For this, a list of
+\ie{} which computing node will process it. There is a list of
 available computing nodes in the HPC machine with relevant data about
 them. Relevant data about a computing node
 include its IP address or hostname; processing capacity
@@ -509,7 +526,7 @@ these large raw data files and associating the references with relevant, meaning
 \subsubsection{Managing Provenance Data}
 
 To manage provenance data, provenance data management systems (including components of WMSs responsible for managing provenance and provenance capture tools that can be coupled to workflow scripts) capture provenance
-data during workflow execution to build a workflow database
+data during workflow execution to build a workflow database.
 This requires log files or other data structures. When provenance data are enriched with domain data and the
 database is made user-accessible for queries, the aforementioned
 analytical capabilities are highly enhanced
@@ -519,7 +536,7 @@ analytical capabilities are highly enhanced
 \label{subsec_wfdb}
 
 When execution data, domain data, and provenance data are stored in the
-same database at runtime, the database provides for online data analysis via monitoring, debugging, performance analysis, and interactive domain data analysis. Let us call this database as \textit{``workflow database"}. Any database is often managed
+same database at runtime, the database provides for online data analysis via monitoring, debugging, performance analysis, and interactive domain data analysis. Let us call this database as \textit{``workflow database''}. Any database is often managed
 by a \myabbrev{DBMS}{Database Management System}, like MySQL, MongoDB or Neo4j. Using the Risers Fatigue Analysis workflow (Sec. \ref{sub_rfa}) as a real-world example, Figure \ref{fig:rfa_workflow_with_prov}  illustrates how the scientific domain data are managed in our dataflow-oriented approach, showing how the data elements flowing between transformations are stored as datasets linked with workflow execution data and provenance data in the workflow database.
 
 \begin{figure}[H]
@@ -577,7 +594,7 @@ light gray represent domain data and those in dark gray represent both
 execution and provenance data. Domain data are part of the schema used for running the workflow.
 A complete instantiation of the Risers Analysis workflow in a relational database
 schema used by d-Chiron WMS is available on GitHub, where we also show concrete examples of SQL queries used to steer this workflow
-\cite{d-ChironGitHub}.
+\cite{d-ChironGitHub}. The SQL queries are also in the Appendix \ref{sql-codes}.
 
 \begin{figure}
     \centering
@@ -598,4 +615,5 @@ in the \codefont{File} relation. \codefont{Performance} relations store data abo
 consumption by each task.
 Since  these data are related, a user can run analytical queries to
 help users to steer the workflow
-at runtime~\cite{Souza2017Data,Dias2015Data-centric,DeOliveira2015How,silva_adding_2018,Souza2015Monitoramento}.
+at runtime~\cite{Souza2017Data,Dias2015Data-centric,DeOliveira2015How,silva_adding_2018,Souza2015Monitoramento}. 
+In this chapter, we presented the background concepts for our approach, WfSteer. In the next chapter, we survey how existing approaches support  workflow steering.

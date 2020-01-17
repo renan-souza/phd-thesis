@@ -114,7 +114,7 @@ where:
 
 
 Adaptations have a characteristic of either update (we call them \textit{U-adaptation}), or insert or delete (called \textit{I/D-adaptation}).
-U-adaptations are steering actions that update data values, like adjustments, fine-tunings, or any modification one or more data elements in the dataflow. Parameter tuning is an example of U-adaptations.
+U-adaptations are steering actions that update data values, like adjustments, fine-tunings, or any modification of one or more data elements in the dataflow. Parameter tuning is an example of U-adaptations.
 I/D-adaptations are steering actions that cause addition or deletion of data elements in the dataflow. Data reduction is an example of I/D adaptations. In this section, we define these two examples of adaptations as special cases of the Steering Action general Definition \ref{def:steeringaction}.
 
 \begin{mydef}{def:tune}{Tune}
@@ -251,7 +251,7 @@ An adaptation was steered by
 (\codefont{wasSteeredBy}) a \codefont{prov:Person},
 occurred at a specified time (class attribute \codefont{prov:startedAtTime}),
 had an adaptation characteristic (class attribute \codefont{adaptationCharacteristic}) that can be
-``update" or ``insert/delete", in case of U-adaptations or I/D-adaptations,
+``update'' or ``insert/delete'', in case of U-adaptations or I/D-adaptations,
 respectively.
 Users may add a description to the adaptation to describe, \eg{} what was going
 on in the experiment when they decided to perform a specific change.
@@ -276,7 +276,7 @@ How adaptations relate to \codefont{ExecuteDataTransformation}, as well as how
 \codefont{prov:Entities} are affected depend on characteristic of the online adaptation,
 as explained next.
 
-\textit{Adapter} is a software service (can be implemented, \eg{} as a function in a workflow script or a method in the WMSs code)
+\textit{Adapter} is a software service (it can be implemented, \eg{} as a function in a workflow script or a method in the WMSs code)
 that knows the communication protocol
 capable of adapting the running workflow following the command issued by the user. That is, it knows how to adapt the elements of the
 dataflow in a running workflow. Since it is a software service,
@@ -299,7 +299,7 @@ Moreover, the newly created data is related to the old one via
 \codefont{prov:wasRevisionOf}, so that the association between the new and old data is maintained.
 Additionally, to relate the adaptation with execution state, PROV-DfA relates
 (\codefont{prov:wasInformedBy}) the
-\codefont{ExecuteDataTransformation} instances that were in ``running"
+\codefont{ExecuteDataTransformation} instances that were in ``running''
 state at the moment of the adaptation.
 Finally, \codefont{Adapter} is related to the prospective entity (\eg{} \codefont{Attribute}, \codefont{DataTransformation})
 that specifies the entity adapted.
@@ -366,3 +366,6 @@ Finally, as users remove data elements in $I_{DS}$, the adapter is related to th
 
 
 \input{chapters/extras/adaptive_monitoring.tex}
+
+
+In the next chapter, we present the first instantiation of WfSteer to support workflow scripts.

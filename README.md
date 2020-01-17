@@ -2,10 +2,11 @@
 
 Adapted from COPPE/UFRJ LaTex template http://coppetex.sourceforge.net 
 
+If you are a COPPE/UFRJ student willing to write your thesis or dissertation in English, feel free to use this source code as a template for your own work.
+
 This link helped me to modify the template to write the thesis in English:
 https://blogdaviqui.wordpress.com/2018/03/02/adaptando-template-latex-de-tese-coppe-ufrj-para-quem-vai-escrever-a-tese-em-ingles/
 
-If you are a COPPE/UFRJ student willing to write your thesis or dissertation in English, feel free to use this source code as a template for your own work.
 
 # Compilation
 

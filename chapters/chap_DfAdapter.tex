@@ -79,7 +79,7 @@ workflow database to retrieve the requested data. The Monitor Manager is to impl
 The Steering APIs are composed of three APIs: \textit{Monitor API}, \textit{Query API}, and \textit{Adapter API}.
 The Monitor and Query APIs call the Query Executor for data analysis, either for workflow analysis or for interactive analysis, respectively.
 They contain programming interfaces that allow users to submit queries to the Query Executor.
-The Adapter API has the interfaces for calling the Adapter Service, which is the component in the adaptable application that knows how to adapt the workflow (Sec. \ref{sec:prov_dfa_general_concepts}).
+The Adapter API has the interfaces for calling the Adapter Service, which is the component in the adaptable application that knows how to adapt the workflow (see the definition of the Adapter software service in Sec. \ref{sec:prov_dfa_general_concepts}).
 The interfaces in the Adapter API are implemented according to the data communication implemented for the adaptable application, as we see in the next section (Sec. \ref{wfscript_system-design-principles}).
 The Steering API's submodules are called by the user using the \textit{User Interface}, which concentrates the available commands the user can issue using the Steering API. It can be exposed as a command line interface, graphical user interfaces, or as a RESTful API.
 
@@ -89,6 +89,14 @@ The Steering API's submodules are called by the user using the \textit{User Inte
 
 In this section, we explain the core design principles followed
 by DfAdapter.
+
+\crossref{V1: nos wms, os requisitos são datflow; e no caso dos scripts, o que seria necessário?}
+\textbf{Dataflow-oriented Data Capture and Analysis.} 
+DfAdapter relies on a dataflow-oriented approach for workflows, as the one presented in 
+Section \ref{subsec_datacentric}, as this is the fundamental basis for WfSteer to manage steering action data, as discussed in Chapter \ref{chap4}. DfAdapter needs that the domain data flowing in the dataflow are captured and stored in a workflow database, during execution, jointly with execution and provenance data (Sec. \ref{section_workflow_steering_db}).
+Considering workflow scripts, DfAnalyzer \cite{Silva2017Raw,Camata2018In,silva_dfanalyzer:_2018} is a tool that can be coupled with scripts to capture runtime data, aware of the dataflow, and stores these captured data in a database ready for analysis during execution.
+In the implementation section (Sec. \ref{dfadapter-implementation-details}), we explain how DfAdapter is combined with DfAnalyzer to provide rich runtime data analysis that integrates provenance, execution, domain, and steering action data.
+
 
 \textbf{Asynchronous Service Calls.}
 DfAdapter can be coupled to adaptable
@@ -140,7 +148,7 @@ both by the Adapter API and by the Adapter Service.
 That is, the Adapter API modifies a file that is accessible by the running workflow.
 When the program pointer in the running workflow reaches an adaptation point,
 the Adapter Service verifies if files
-were modified and, in case of modification, the application is adapted.
+were modified based on the last-modification date metadata provided by the file system API, in case of modification, the application is adapted.
 Then, the Steering Action Data Manager service is called to relate and store the adaptation.
 Although
 file-based checks are a simple approach, it is widely used especially by
@@ -176,7 +184,7 @@ the adaptation accordingly, and DfAdapter is called to relate and store the stee
 We tested this implementation in a synthetic workflow example using the parallel framework
 Apache Spark and Redis, a lightweight in-memory Key Value store, as the
 DBMS between the workflow and DfAdapter. The source code is available on
-GitHub \cite{DfAdapterGitHubDfAdapter}.
+GitHub \cite{DfAdapterGitHubDfAdapter} and in Appendix \ref{dfadaptercode}.
 
 \textbf{DBMS and Data Model for the Workflow Database.} DfAdapter
 needs a DBMS to manage the workflow database. Several data models can
@@ -211,8 +219,10 @@ decides for an adaptation action,
 (2) the user sends a steering command
 using DfAdapter's steering command line interface (implemented as a program called \codefont{WfSteerCtl}), which (3) calls the
 Adapter API,
-which (4) calls the Steering Action Data Manager service
-to (5) register the beginning of an adaptation intention.
+which (4) calls the Steering Action Data Manager service, 
+\crossref{L6: Fig 5.2 – acertar a figura do diagrama de sequencias para incluir o ack e bloqueio
+} 
+waits for the service callback, then (5) registers the beginning of an adaptation intention.
 The Adapter API also (6)
 communicates with the Adapter Service, which (7)  effectuates the adaptation.
 When (8) the running
@@ -228,7 +238,7 @@ continues to run, and finally
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth,keepaspectratio]{img/seq-diagram-dfadapter.pdf}
+    \includegraphics[width=\textwidth,keepaspectratio]{img/df_adapter_seq_diagram.pdf}
     \caption{Sequence diagram for managing steering action data with DfAdapter.}
     \label{fig:dfadapter_seq_diagram}
 \end{figure}
@@ -252,7 +262,7 @@ being continuously captured during workflow execution.
 \input{algorithms/df_adapter_algorithm}
 
 \subsubsection{Workflow Database Schema}
-\label{sec:dfadapter_wfschema}
+
 
 To implement the PROV-DfA provenance data diagram presented in Section \ref{sec_provdfa}, we use the relational data model.
 An excerpt of the relational database schema in use by DfAdapter is in Figure \ref{fig:dfadapter_wfdbschema}, whereas a complete figure can be found
@@ -285,7 +295,7 @@ in PROV-DfA, and execution data are further extended with
 performance data via the relationship between \codefont{Task} and \codefont{Performance}
 tables. The \codefont{Person} who steered and the \codefont{Adapter} service used in that
 specific steering action are related and stored to \codefont{ParameterTuning}. Thus, because
-of these entities and relationships being populated during the workflow execution in a user-accessible database, users can drive their
+of these entities and relationships are populated during the workflow execution in a user-accessible database, users can drive their
 analyses and decisions at runtime using these data.
 
 \begin{figure}[H]
@@ -296,7 +306,7 @@ analyses and decisions at runtime using these data.
 \end{figure}
 
 \subsubsection{Combining DfAdapter with DfAnalyzer}
-\label{dfanalyzer_dfadapter}
+
 
 DfAdapter needs a Workflow Data Manager to provide the
 data that will give the context of the steering actions, by relating the actions with the overall workflow data being generated during execution.
@@ -347,7 +357,7 @@ need to inform the input dataset $I_{DS}$ to be adapted, and a
 simple key-value data structure containing the parameters and their new
 values. For flexibility, the key-value data structure can be passed
 directly using the argument \codefont{-\/-p} or can be written into a file to be
-passed argument. We provide an optional argument \codefont{-\/-reason} to allow
+passed as an argument. We provide an optional argument \codefont{-\/-reason} to allow
 users to annotate that specific steering action.
 Listing \ref{listing:dfadapter_commandlines} shows an example
 of DfAdapter's command line interface.
@@ -357,3 +367,6 @@ of DfAdapter's command line interface.
 
 
 \input{chapters/extras/analyzing_overhead.tex}
+
+
+In the next chapter, we present the second instantiation of WfSteer to support a data-centric WMS.

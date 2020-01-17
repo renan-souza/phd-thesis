@@ -42,7 +42,7 @@ Its main differentiator compared to any other WMS is that it relies on an
 
 \textbf{Fast Hybrid Transactional and Analytical Workloads.}
 When the user sends an adaptation command,
-the WMS needs to react and attend the user call as soon as possible.
+the WMS needs to react and respond to the user call as soon as possible.
 The steering action is delimited by a clause $\alpha$ (Def. \ref{def:steeringaction}), which often delimits the
 subset of the dataset in the dataflow that is being steered.
 Thus, to implement the steering action in a WMS,
@@ -64,7 +64,7 @@ On the other hand, distributed relational DBMS natively provide atomicity, consi
 isolation, and durability (ACID) transactions \cite{Ozsu2011Principles}.
 The WMS can take advantage of this capability and implement the steering actions in a way to outsource to the DBMS complex transaction control that guarantees consistency.
 
-The in-memory distributed DBMS in d-Chiron is the MySQL Cluster\footnote{https://www.mysql.com/products/cluster}, a relational DBMS that ensures strong-consistent ACID transactions, has a high throughput to deal with multiple concurrent tasks, and it supports both transactional and analytical workloads. Thus, MySQL Cluster is a good choice to follow the discussed principles
+The in-memory distributed DBMS in d-Chiron is the MySQL Cluster\footnote{https://www.mysql.com/products/cluster}, a relational DBMS that ensures strong-consistent ACID transactions, has a high throughput to deal with multiple concurrent tasks, and it supports both transactional and analytical workloads. Thus, MySQL Cluster is a good choice to follow the presented principles.
 
 \section{Implementation Details}
 \label{d-chiron-implentation}
@@ -204,10 +204,12 @@ where the ratio 1:n means that the tasks in this set are
 $tasks^{1:n}$. Finally, the WMS will know that tasks in $\S^{1:n}$
 should not be processed. This is different for
 $tasks^{1:1}$ because they cannot be executed if their input
-datasets are removed. The WMS will know how to handle the tasks in
-sets $\S^{1:1}$ or $\S^{1:n}$ as long as it knows the type of data
-transformation of the data transformation that would consume the elements defined
-by the criteria $C$. Such verification is important to guarantee
+datasets are removed. 
+The WMS will know how to handle the tasks in
+sets $\S^{1:1}$ or $\S^{1:n}$. For this, it needs to know beforehand, using prospective provenance, 
+whether the data transformation corresponding to the tasks that would consume the elements defined
+by the criteria $C$ is expected to consume one element per task or many elements per task.
+Such verification is important to guarantee
 consistency during reduction.
 
 
@@ -264,7 +266,7 @@ are put together in a single DBMS transaction,
     \label{fig:seq_diagram_data_reduction}
 \end{figure}
 
-The workflow database' tables are distributed, thus making concurrency control
+The workflow database tables are distributed, thus making concurrency control
 of the tables' partitions even more complex. In d-Chiron engine,
 distributed concurrency control in these tables is outsourced to the
 DBMS that guarantees the \myabbrev{ACID}{Atomicity, Consistency, Isolation, Durability} transaction properties \cite{Ozsu2011Principles}.
@@ -294,7 +296,7 @@ store provenance of removed data elements, we extend the workflow database
 schema with the table \codefont{User\_Query} to store the queries that select the
 slice of the dataset to be removed.
 The description for each \codefont{User\_Query}
-column is described in Table \ref{tab:dchirontab1}.
+column is in Table \ref{tab:dchirontab1}.
 The removed data elements are stored in table \codefont{Modified\_Elements}, which is a table that represents a
 many-to-many relationship between \codefont{User\_Query} and
 \codefont{Dataset}.
@@ -434,7 +436,7 @@ provided support.
 
 In d-Chiron, computer scientists who are experts in operating d-Chiron
 work closely with CSE users, the target-user of this
-work. However, computational scientists are can operate d-Chiron and
+work. However, computational scientists can operate d-Chiron and
 steer the running workflow. Before steering a workflow, the workflow has
 to be modeled. The user identifies the input and output data elements of
 each of those activities and gives a name to the dataset that contains
@@ -470,7 +472,7 @@ relational database schema, build and run SQL queries, and get their
 tabular results in the interface as the workflow runs. Figure \ref{fig:mysql_workbench} shows
 how MySQL Workbench can be used to write \refQ{Q5} (described as natural language in Table \ref{tab:queries2}), which integrates domain, provenance
 and execution data in a same query. More queries with their natural
-language descriptions are on GitHub \cite{d-ChironGitHub}.
+language descriptions are on GitHub \cite{d-ChironGitHub} and in the Appendix \ref{sql-codes}.
 
 \begin{figure}
     \centering
@@ -538,3 +540,5 @@ specific query aspect (\eg{} increase the result limit) by
 editing the query text file and in line 10 he modifies the monitoring
 query. As for the management of steering actions, these user interactions are properly stored in the workflow database for
 provenance.
+
+In the next chapter, we present the experimental evaluation of WfSteer.

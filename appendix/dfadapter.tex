@@ -1,0 +1,253 @@
+\chapter{DfAdapter's steering action data tracker implementation}
+\label{dfadaptercode}
+
+\noindent
+\begin{lstlisting}[
+    language=python
+]
+import sys
+import os
+import json
+from time import gmtime, strftime
+from subprocess import Popen, PIPE
+import pymonetdb
+
+from numpy import random
+
+def get_steered_parameters_str(parameters_json):
+    if os.path.isfile(parameters_json):
+        with open(parameters_json) as data_file:
+            steered_parameters = json.load(data_file)
+    else:
+        try:
+            steered_parameters = json.loads(parameters_json)
+        except:
+            print "This is not a valid JSON: %s \n" % parameters_json
+            sys.exit(-1)
+    return json.dumps(steered_parameters)
+
+if __name__ == "__main__":
+
+    if len(sys.argv) < 4:
+        print "Arguments: user dataset parameters_json [optional path to adapter script]"
+        sys.exit(0)
+
+    connection = pymonetdb.connect(username="monetdb", password="monetdb", hostname="localhost", database="dataflow_analyzer", autocommit=True)
+    cursor = connection.cursor()
+
+
+    user = sys.argv[1]
+    dataset = sys.argv[2]
+    parameters_json = sys.argv[3]
+    if len(sys.argv) > 4:
+        adapter_implementation_script = sys.argv[4]
+    else:
+        adapter_implementation_script = "src/adapters/redis_based_adapter.py"
+
+    parameters_str = get_steered_parameters_str(parameters_json)
+    cmd = ["python", adapter_implementation_script, parameters_str]
+    process = Popen(cmd, stdout=PIPE)
+    (adapted_parameters_json, err) = process.communicate()
+
+    exit_code = process.wait()
+    if (exit_code == 0):
+        provenance = json.loads(adapted_parameters_json)
+        provenance.update({"user":user, "dataset":dataset, "time_gmt":strftime("%Y-%m-%d %H:%M:%S", gmtime())})
+        with open('data/adaptations.jsonl', 'a+') as outfile:
+            outfile.write(json.dumps(provenance)+"\n")
+
+        cursor.execute('set schema "public"')
+
+        human_activity_id = int(random.random()*100)
+
+        sql = ("INSERT INTO human_activity (id, ha_type, time, description) values \
+        (" + str(human_activity_id) + ", 'TUNING','" + provenance['time_gmt'] +  "', '');")
+
+        print(sql)
+
+        cursor.execute(sql)
+
+
+
+        cursor.execute("INSERT INTO attribute_tuned (human_activity_id, attribute_id, old_value, new_value)\
+         VALUES ({}, {},{},{});".format(human_activity_id, 230, provenance['parameter-provenance']['attr1']['old'],provenance['parameter-provenance']['attr1']['new']))
+
+        print provenance
+        print "Steered successfully"
+
+\end{lstlisting}
+
+
+
+\subsubsection{File-based Adaptation Data Tracker}
+
+\begin{lstlisting}[
+    language=python
+]
+from __future__ import print_function
+import ConfigParser
+import sys
+import os
+import json
+from StringIO import StringIO
+from iniparse import INIConfig
+import time
+import sys
+
+INI_SECTION_HEADER = "parameters"
+TIMES_FILE_NAME = "times.json"
+RESET_FILE_NAME = "reset.run"
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+def read_ini_file(in_filepath):
+    with open(in_filepath, "r") as ini_file:
+        ini_file_content = ini_file.read()
+    vfile = StringIO(u'[%s]\n%s'  % (INI_SECTION_HEADER, ini_file_content))
+    in_parameters = INIConfig(vfile)
+    return in_parameters
+
+def write_new_ini_file(in_parameters):
+    new_ini_content = in_parameters.__str__().replace("[%s]\n"%INI_SECTION_HEADER,"")
+    with open(in_filepath, "w") as new_file:
+        new_file.write(new_ini_content)
+
+def steer_parameters(in_parameters, steered_parameters):
+    steering_provenance = {}
+    for p in steered_parameters:
+        if p not in in_parameters[INI_SECTION_HEADER]:
+            eprint("There is no such parameter: %s " % p)
+            sys.exit(-1)
+
+        old_v = in_parameters[INI_SECTION_HEADER][p]
+        new_v = steered_parameters[p]
+        in_parameters[INI_SECTION_HEADER][p] = new_v
+        steering_provenance[p] = {
+            "old": old_v,
+            "new": new_v
+        }
+    return steering_provenance
+
+def write_reset_file(execution_dir):
+    reset_file_path = execution_dir+"/"+RESET_FILE_NAME
+    with open(execution_dir+"/"+RESET_FILE_NAME, "w") as run_sh:
+        run_sh.write("")
+
+
+def wait_to_get_time_dict(execution_dir):
+    time_path = execution_dir+"/"+TIMES_FILE_NAME
+
+    while not os.path.isfile(time_path):
+        eprint("times.json not ready yet. Waiting...")
+        time.sleep(3)
+
+    try:
+        with open(time_path) as time_file:
+            time_dict = json.load(time_file)
+            os.remove(time_path)
+            return time_dict
+    except:
+        eprint("Invalid JSON in %s " % time_path)
+        sys.exit(-1)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        eprint("You need to pass the parameters to be tuned as a valid JSON format")
+        sys.exit(0)
+
+    in_filepath = os.getenv("INFILE", None)
+    if not in_filepath:
+        eprint("You need define INFILE environment var with the ini file to be modified")
+        sys.exit(0)
+
+    steered_parameters = json.loads(sys.argv[1])
+    execution_dir = os.getcwd()
+
+    in_parameters = read_ini_file(in_filepath)
+    parameter_provenance = steer_parameters(in_parameters,steered_parameters)
+    write_new_ini_file(in_parameters)
+    write_reset_file(execution_dir)
+    time_dict = wait_to_get_time_dict(execution_dir)
+
+    return_dict = {
+        "parameter-provenance": parameter_provenance,
+        "extra-domain-data": time_dict
+    }
+    print(json.dumps(return_dict))
+\end{lstlisting}
+
+
+
+\subsubsection{Redis-based Adaptation Data Tracker}
+
+\begin{lstlisting}[
+    language=python
+]
+
+import redis
+import json
+import sys
+import time
+import ast
+from time import gmtime, strftime
+
+class Redis_DataSet_Adapter(object):
+    def __init__(self):
+        self.redis_client = redis.from_url('redis://localhost:6379')
+
+    def has_adaptation(self):
+        return self.redis_client.get("adapted") == "t"
+
+    def get_new_values(self):
+        attr1 = float(self.redis_client.get("attr1"))
+        attr2 = float(self.redis_client.get("attr2"))
+        attr3 = float(self.redis_client.get("attr3"))
+        return [attr1, attr2, attr3]
+
+    def update_values(self,dataset_lst,iteration):
+        new_values = self.get_new_values()
+        self.redis_client.set("iteration", iteration)
+        self.redis_client.set("old_values", dataset_lst[0])
+        self.redis_client.set("adapted", "f")
+        return [[new_values[0], new_values[1], new_values[2]]]
+
+
+class DataSet_Adapter_ProcCall(object):
+    def __init__(self):
+        self.redis_client = redis.from_url('redis://localhost:6379')
+
+    def has_adaptation(self):
+        return self.redis_client.get("adapted") == "t"
+
+    def adapt(self, dict_new_values):
+        self.redis_client.set("adapted", "t")
+        for param in dict_new_values:
+            self.redis_client.set(param, dict_new_values[param])
+
+        #wait for the other process to conclude the adaptation
+        while self.has_adaptation():
+            time.sleep(1)
+
+        lst_old_values = ast.literal_eval(self.redis_client.get("old_values"))
+        iteration = self.redis_client.get("iteration")
+
+        self.save_prov(dict_new_values,lst_old_values,iteration)
+
+    def save_prov(self,dict_new_values,lst_old_values, iteration):
+        prov = dict()
+        prov["parameter-provenance"] = {
+            "attr1": {"new":dict_new_values["attr1"],"old":lst_old_values[0]},
+            "attr2": {"new":dict_new_values["attr2"],"old":lst_old_values[1]},
+            "attr3": {"new":dict_new_values["attr3"],"old":lst_old_values[2]}
+        }
+        prov["extra-domain-data"] = {"iteration":iteration}
+        print json.dumps(prov)
+
+if __name__ == '__main__':
+    dict_new_values = json.loads(sys.argv[1])
+    ds2Adpt = DataSet_Adapter_ProcCall()
+    ds2Adpt.adapt(dict_new_values)
+
+\end{lstlisting}
+

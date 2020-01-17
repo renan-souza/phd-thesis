@@ -10,7 +10,7 @@ This culminated in the development of an emerging interdisciplinary field of com
 CSE combines mathematical models that simulate natural phenomena, numerical algorithms for solving complex equations,  \myabbrev{HPC}{High Performance Computing} techniques to develop programs that can take advantage of modern parallel hardware, and data science techniques to analyze huge amounts of scientific data \cite{Rude2016Research}.
 This allows for both remarkable scientific discoveries -- like the detection of Gravitational Waves, which led to the Nobel Prize in Physics in 2017 \cite{F.daSilva2016Pegasus} -- and game-changing business impact in industries that depend on such experiments to generate revenue -- like the \myabbrev{O\&G}{Oil and Gas} industry, which leverages CSE experiments to improve (\eg{} increase the precision, reduce the environmental impact) oil exploration and production processes \cite{ibm_research_editorial_staff_ai_2018}.
 
-However, conducting such experiments is far from trivial. They have the exploratory nature of science, meaning that typically there is a huge solution space to be explored. An experiment run often lasts for hours or days, even running on large-scale computers, like HPC machines. That is why the computational scientists and engineers (CSE users) are often applying HPC techniques in their software, aiming to run in parallel and reduce the execution time. 
+However, conducting such experiments is far from trivial. They have the exploratory nature of science, meaning that typically there is a huge solution space to be explored. An experiment run often lasts for hours or days, even running on large-scale computers, like HPC machines. That is why the computational scientists and engineers (CSE users) are often applying HPC techniques in their software, aiming to run them in parallel and reduce the execution time. 
 Long execution times means that not only the HPC machines are executing for longer, but also the qualified computational scientists and engineers, whose time is quite valuable, are waiting for longer. So, when investigating new tools to be added to their toolset, these CSE users typically discard any tool that can add significant execution overhead to their already long experiment executions.
 
 In addition, to ease the complexity of the CSE experiments, a widely adopted practice is to model them using a \textit{scientific workflow} (also known as \textit{large-scale workflow} or \textit{workflow}, for short) abstraction \cite{F.daSilva2017characterization}.
@@ -20,7 +20,7 @@ like Chiron \cite{Ogasawara2011algebraic} and Pegasus \cite{Deelman2015Pegasus}.
 These are the two typical ways of conducting CSE experiments on large-scale computers.
 
 
-When modeling the workflows, the CSE users specify the \textit{workflow data}, which are the data processed (\ie{} consumed and generated) during the workflow execution, like scientific data files and parameters for the algorithms or numerical methods. By varying the workflow data, the users investigate different hypotheses for their experiments, often in a ``what-if" basis, analyzing how the variation affects \myabbrev{QoI}{Quantities of Interest}, like precision, convergence, numerical errors.
+When modeling the workflows, the CSE users specify the \textit{workflow data}, which are the data processed (\ie{} consumed and generated) during the workflow execution, like scientific data files and parameters for the algorithms or numerical methods. By varying the workflow data, the users investigate different hypotheses for their experiments, often in a ``what-if'' basis, analyzing how the variation affects \myabbrev{QoI}{Quantities of Interest}, like precision, convergence, numerical errors.
 Thus, during the execution, they need to analyze the workflow data to verify their hypotheses, understand the intermediate results, monitor how variations of data or parameters affect the QoIs, and check on the experiment's health.
  They analyze the experiment's health both from a domain perspective (\eg{} is there any result that dissatisfies a physical constraint?) and from a computational perspective (\eg{} is the workflow consuming memory, disk, CPU as expected?). 
  Depending on the results, they intervene by changing the workflow data. 
@@ -38,8 +38,13 @@ Despite the recent breakthroughs in theory and practice of Artificial Intelligen
 
 \textit{User steering} (also known as \textit{computational steering}) is a powerful concept meaning that users are enabled to interactively and dynamically drive a computational process while it is still running (\ie{} online, at runtime, during execution).  In workflows, \textit{workflow steering} is the ability that allows users to interactively analyze (\eg{} inspect, visualize, monitor) or adapt (\eg{} tune parameters, change input datasets) the workflow data online \cite{Mattoso2015Dynamic, Souza2017Data}. We call \textit{user steering actions}
 the individual user interactions performed during workflow steering, like asking a monitoring query (in case of \textit{online data analysis}) or tuning a parameter (in case of \textit{online data adaptation}).
-The goal of workflow steering is to anticipate anomalous behavior and to intervene in the workflow execution aiming at achieving a satisfactory execution. 
-The user knows what a ``satisfactory execution'' means. Some examples of satisfactory executions are the ones that generate results with high accuracy, low error, high data quality, or simply the ones that execute timely and successfully.
+\crossref{L1) o objetivo é melhorar o desempenho ou melhorar a qualidade do resultado?
+Diminuir a ênfase no desempenho e objtevido de redução
+reforçar que o objetivo é o steering e não diminuir o desempenho
+}
+Workflow steering allows for users to analyze the workflow data at runtime and to intervene in the workflow, also at runtime, to adapt it. The  consequences of successful runtime adaptations are achieving workflow results with high accuracy, low error, or high data quality.
+
+
 
 The \textit{workflow steering lifecycle} is given by:
 (i) analyzing the workflow data;
@@ -78,7 +83,9 @@ This is hard because to allow for tracking steering actions, steering action dat
 The general hypothesis of this thesis is that by 
 managing user steering action data,
 users can track their actions, which enables online analysis of the steering action data, hence allowing users to understand how their steering actions are influencing a running workflow. 
-Since provenance data management techniques and concepts have been successfully explored to support user steering even in CSE \cite{Silva2017Raw, Silva2018Capturing, souza_keeping_2019}, we could use provenance for the management of user steering action data. 
+Since provenance data management techniques and concepts have been successfully explored to support user steering even in CSE \cite{Silva2017Raw, Silva2018Capturing, souza_keeping_2019}, we could use provenance
+one step further
+for the management of user steering action data. 
 We can further distinguish user steering action data management between two important aspects: one is to capture steering actions, create the explicit data relationships with the workflow data, and store in a database for online analysis; and the other is to do this while incurring low overhead for efficient performance of the workflow execution. Furthermore, our hypothesis encompasses the two typical ways CSE users conduct their experiments
 on large-scale computers, \ie{} using workflow scripts and WMSs. 
 To validate this hypothesis, we propose 
@@ -102,9 +109,12 @@ It resulted from a combination of new concepts, techniques, definitions, and des
 
 We organize the validation of our hypothesis by considering its two aspects (\ie{} to allow for tracking actions and doing it with low execution overhead).
 For this, we carry out two classes of experiments: one class is to qualitatively investigate whether WfSteer allows for tracking steering actions, using real-world workflows as driving use cases; and the other is to quantitatively evaluate the added data capture overhead.
-Additionally, since the hypothesis encompasses both workflow scripts and WMS, within each class of experiments we design and build two instances of WfSteer: one, called DfAdapter,
-is to support users who use scripts to conduct their experiments;
-and the other, implemented within a WMS, is to support WMSs' users.
+Additionally, since the hypothesis encompasses both workflow scripts and WMS, within each class of experiments we design and build two instances of WfSteer:
+\crossref{V2: Favor incluir desde o início o uso da DfAnalyzer e porque foi escolhida?}
+one, called DfAdapter,
+is built on DfAnalyzer \cite{Silva2017Raw,Camata2018In,silva_dfanalyzer:_2018}, to support users who use scripts to conduct their experiments;
+and the other, implemented within Chiron  \cite{Dias2015Data-centric,Goncalves2013Performance,Santos2013Runtime,Souza2015Parallel}, is to support WMSs' users.
+DfAnalyzer and Chiron were chosen due to their successful unique features of combining runtime provenance data analysis with negligible overhead in CSE workflows \cite{Camata2018In,Souza2015Parallel}. 
 Then, through the practical use of WfSteer using these two instances in real use cases running on large HPC machines,
 among many other findings,
 we found that WfSteer in the WMS enabled users to understand how input data were reduced online to yield reduction of 32.4\% of the total execution time, hence significantly saving resources; and that DfAdapter allowed users to understand which parameters were tuned that made the workflow finish successfully without memory overflow.
@@ -126,17 +136,17 @@ Souza2015Parallel,
 Silva2018Capturing,
 Silva2016Integrating}, among which the papers SOUZA \textit{et al.} \cite{Souza2017Data,Souza2018Provenance,souza_keeping_2019} compose the core contribution of this thesis and drive its organization.
 In addition to this introduction, the remainder of this manuscript is organized as follows.
-First, in Chapter \ref{chap2}, we present the background for this thesis,
+In Chapter \ref{chap2}, we present the background for this thesis,
 \ie{} user steering in large-scale workflows in CSE. We present the fundamental concepts,
 terminology, details on how CSE users conduct their experiments using scripts or WMSs,
 and characterize the scientists and engineers in CSE.
-Second, in Chapter \ref{chap3}, we show a thorough literature review on
+In Chapter \ref{chap3}, we show a thorough literature review on
 user steering support from a data analysis perspective.
 It is a first of this kind that investigates approaches both for WMSs and scripts in CSE.
-Third, in Chapter \ref{chap4}, we introduce WfSteer, our theoretical framework.
-Forth, in Chapter \ref{chap_dfadapter}, we present DfAdapter, one of our implementations of WfSteer. We explain its design decisions, general architecture, and implementation details on managing steering action data in scripts.
-Fifth, in Chapter \ref{chap_dchiron}, we present our implementation in d-Chiron WMS, as another implementation of WfSteer.
-Sixth, in Chapter \ref{chap6}, we present the experiments that support the validation of this thesis's hypothesis.
+In Chapter \ref{chap4}, we introduce WfSteer, our theoretical framework.
+In Chapter \ref{chap_dfadapter}, we present DfAdapter, one of our implementations of WfSteer. We explain its design decisions, general architecture, and implementation details on managing steering action data in scripts.
+In Chapter \ref{chap_dchiron}, we present our implementation in d-Chiron WMS, as another implementation of WfSteer.
+In Chapter \ref{chap6}, we present the experiments that support the validation of this thesis's hypothesis.
 Finally, in Chapter \ref{chap7}, we conclude this thesis by sharing lessons learned and proposals for future work.
 
 

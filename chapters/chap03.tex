@@ -6,9 +6,52 @@ Several surveys, both old~\cite{MulderSurvey,Xian2008Computational} and recent o
 Particularly, \citet{Mattoso2015Dynamic}
   analyzed approaches implemented within WMSs analyzing their steering and provenance data management support.
 In this chapter, we extend the analyses done by these surveys by examining several approaches, within a WMS or not, concerning how they support steering (online analysis and adaptation) and, more importantly, their support for allowing for tracking steering actions.
-To the best of our knowledge, this is the first state-of-the-art analysis in the context of user steering in large-scale workflows that examines approaches both within and without WMSs.
+\crossref{V7: adicionar as figuras da revisao bibliografica}
+A search on Google Scholar using keywords related to the content of this thesis returned about 450 papers, among more than 300 have been published in the past few years as shown in Figure \ref{fig:chap3_timeline}.
+Among these papers, we investigate in detail over 60 papers related to this work, as we present in the next sections. Among these papers, we identified 54 approaches, where 7 are based on a WMS and 47 are not (Fig. \ref{fig:chap3-wms-vs-nowms}). To the best of our knowledge, this is the first state-of-the-art analysis in the context of user steering in large-scale workflows that examines approaches both within and without WMSs.
+We begin this chapter by investigating the types of steering actions supported in the state-of-the-art. We could identify two main types: online data analysis and online data adaptation. These two can be further classified as shown in Figure \ref{fig:chap3_taxonomy}, and detailed as follows.
 
-We begin by investigating the types of steering actions supported in the state-of-the-art. We could identify two main types: online data analysis and online data adaptation. These two can be further classified as shown in Figure \ref{fig:chap3_taxonomy}, and detailed as follows.
+
+\begin{figure}
+\centering
+\begin{subfigure}{.6\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/timeline.png}
+  \caption{Amount of papers analyzed in our search in the past years.}
+  \label{fig:chap3_timeline}
+\end{subfigure}%
+\begin{subfigure}{.1\textwidth}
+  % \centering
+  % \includegraphics[width=1.0\linewidth]{img/chap3-wms-vs-nowms.png}
+  % \caption{Number of approaches that use or not WMSs.}
+  % \label{fig:chap3-wms-vs-nowms}
+\end{subfigure}
+\begin{subfigure}{.3\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{img/chap3-wms-vs-nowms.png}
+  \caption{Number of approaches that use or not WMSs.}
+  \label{fig:chap3-wms-vs-nowms}
+\end{subfigure}
+%\caption{}
+% \label{fig:chap3-wms-vs-nowms}
+\end{figure}
+
+
+%
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth,keepaspectratio]{img/timeline.png}
+%     \caption{Amount of papers analyzed in our search in the past years.}
+%     \label{fig:chap3_timeline}
+% \end{figure}
+%
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\textwidth,keepaspectratio]{img/chap3-wms-vs-nowms.png}
+%     \caption{Number of approaches that use or not WMSs}
+%     \label{fig:chap3-wms-vs-nowms}
+% \end{figure}
+
 
 \begin{figure}[H]
     \centering
@@ -42,7 +85,7 @@ In case of online data adaptation, we can further identify the following actions
     \item[-] \textit{Data reduction} --- dynamic removal of input data that the user decided that should not be processed, such as pruning possible solutions of a large solution space being explored in parallel that are no longer
 interesting (\eg{} the solutions are unfeasible or not optimal).
 
-    \item[-] \textit{Checkpointing and rolling back} --- specification of certain points, during workflow execution, that the user marked ``safe" or had the expected results. If a failure happens, e.g., program crash, function not con-verging as excepted, or even failure caused by external factors, such as hardware failure, the user would be able to request a rollback to one of the check-pointed states. This facilitates ``what-if'' exploration
+    \item[-] \textit{Checkpointing and rolling back} --- specification of certain points, during workflow execution, that the user marked ``safe'' or had the expected results. If a failure happens, e.g., program crash, function not con-verging as excepted, or even failure caused by external factors, such as hardware failure, the user would be able to request a rollback to one of the check-pointed states. This facilitates ``what-if'' exploration
     \cite{Bourhis2016Analyzing}.
 
     \item[-] \textit{Performance optimization} --- dynamic tunes in the application data or computing resources at runtime aiming at improving performance or saving resources, \eg{} change the load of
@@ -71,8 +114,16 @@ any other data for data analysis or reproducibility.
 Table \ref{tab:comparative_tables_systems} shows that all approaches surveyed provide partial support for online data analyses, as at
 least monitoring is provided by almost all of them and many provide runtime visualization.
 However, these approaches provide little support for managing steering action data, as discussed next.
+\crossref{V7: adicionar as figuras da revisao bibliografica}
+Figure \ref{fig:figtab31} summarizes the contents of Table \ref{tab:comparative_tables_systems} to quantify the amount of approaches that support online data analysis, adaptation, and steering action tracking.
 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/tab31.png}
+    \caption{Summarization of Table \ref{tab:comparative_tables_systems}.}
+    \label{fig:figtab31}
+\end{figure}
 
 
 \subsubsection{Approaches without a Workflow Management System}
@@ -83,15 +134,15 @@ back.
 Falcon \cite{Gu1995Falcon:} collects trace data and stores in a database. It also has
 Trace data collector, Trace data analyzer, and a Trace data database.
 These traces are used for debugging and \textit{post-hoc} analyses.
-Its runtime data capture is limited, with no integration with domain,
-and performance. Steering action data are not
+Its runtime data capture is limited, with no integration with domain
+and performance data. Steering action data are not
 captured. There is no support for exploratory online data analyses. There
 are no explicit data relationships between the user's steering actions with
 the results of a steering action. Furthermore, they show little use of
 the traces database in their paper, making it harder to evaluate
 the benefits of having such a database.
 
-\citet{Danani2015Computational}' work uses a DBMS for registering user records and
+\citet{Danani2015Computational}'s work uses a DBMS for registering user records and
 generic application data.
 Despite the data analytical component in their architecture, it is not
 clear if it can be used for online data analyses to facilitate knowledge
@@ -99,9 +150,9 @@ discovery in large amounts of scientific data and to relate to user
 steering data. \citet{Shu2011Computational,Shu2006WBCSim:} use a DBMS to facilitate development of WBCSim.
 It stores simulation input and results, thus can be used for analyses.
 
-DfAnalyzer \cite{Silva2017Raw,Camata2018In,silva_dfanalyzer:_2018} allows for rich dataflow online analysis in large-scale workflows. It contributes by providing workflow provenance data analysis enriched with execution data and domain data through runtime data extraction and indexing techniques. 
+DfAnalyzer \cite{Silva2017Raw,Camata2018In,silva_dfanalyzer:_2018} allows for rich dataflow online analysis in large-scale workflows. It contributes by providing workflow provenance data analysis enriched with execution data and domain data through runtime data extraction and indexing techniques.
 DfAnalyzer materializes dataflows by relating elements from raw data files. Through manual instrumentation of workflow script, users add lightweight library calls with negligible overhead to the workflow execution. It can be combined with ParaView Catalyst to allow for \textit{in-situ} data capture and runtime visualization. Based on data analysis provided by DfAnalyzer, CSE users were able  to steer a running workflow \cite{Camata2018In}.
-However, like all the other approaches, DfAnalyzer does not manage user steering action data, thus users cannot understand how their actions are influencing a running workflow, which is a critical aspect that needs to be supported in the workflow steering lifecycle. 
+However, like all the other approaches, DfAnalyzer does not manage user steering action data, thus users cannot understand how their actions are influencing a running workflow, which is a critical aspect that needs to be supported in the workflow steering lifecycle.
 
 Therefore, none of these approaches manage steering action data, \ie{} they do not capture steering action data, relate to the workflow data, and store in a database available for analysis at runtime, which would allow users to analyze steering action data online, supporting the workflow steering lifecycle.
 
@@ -121,17 +172,17 @@ A major shortcoming is the lack of support for monitoring queries
 involving domain data from data structures or repositories, which remain
 isolated from execution data. This prevents a WMS from providing
 support for monitoring queries like ``how many tasks are still pending to
-be scheduled for the workflow activity 3?" or ``what is the average
-execution time for the tasks that have already executed?", and debugging
+be scheduled for the workflow activity 3?'' or ``what is the average
+execution time for the tasks that have already executed?'', and debugging
 queries like ``how long was the average execution time for tasks that
-produced a result value greater than x?". The problem is that the user
+produced a result value greater than x?''. The problem is that the user
 who models a workflow often needs to fine-tune its configuration.
 Analytical queries, with performance data (\eg{} task duration,
 memory or CPU consumption by task, etc.) and domain data, can show
 whether the workflow is in the right direction or needs further
-adjustments. When these data are separated, submitting monitoring or
+adjustments. When these data are separated, submitting a monitoring or
 debugging query is quite complex, leading to the classic problem of data
-integration for data analysis.
+integration for analysis \cite{Jagadish2014Big}.
 
 Besides, if performance data are not adequately registered during
 workflow execution, they will no longer be available for analyses when
@@ -164,7 +215,7 @@ user queries only after the workflow finishes.
 Stampede \cite{Gunter2011Online} is a DBMS-based
 execution monitoring tool that can be plugged into WMSs. Stampede adopts
 a centralized DBMS solution and has been evaluated with two different
-WMSs, Pegasus and, Triana, to show its monitoring facilities. However, it
+WMSs, Pegasus and Triana, to show its monitoring facilities. However, it
 is also a solution that does not integrate monitoring to domain or
 provenance data, and does not allow for tracking steering actions.
 
@@ -182,13 +233,13 @@ capabilities for relating different workflow data and limited
 Chiron \cite{Ogasawara2011algebraic, Dias2015Data-centric}
 collects provenance data and uses a centralized, relational DBMS to
 integrate and manage data required for parallel execution and data for
-analytical queries. It the only WMS that manages execution, domain, and provenance data in the same database, making it an exception among the approaches within WMSs. 
+analytical queries. It is the only WMS that manages execution, domain, and provenance data in the same database, making it an exception among the approaches within WMSs.
 SciCumulus \cite{Oliveira2010SciCumulus:} is a lightweight middle on top of Chiron that adds capabilities to exploit cloud computing environments.
 d-Chiron \cite{souza_controlling_2015_thesis,Souza2015Parallel}
 is a version of Chiron that employs a highly efficient in-memory distributed DBMS to accelerate the parallel execution control in Chiron. However, as the other WMSs, neither Chiron or any of its versions can manage steering action data without the concepts and techniques introduced in this thesis.
 
 
-Therefore, we are not aware of any WMS approach that managers steering action data, do not allow the users to track their steering actions, compromising the workflow steering lifecycle support.
+Therefore, we are not aware of any WMS approach that manages steering action data or allow the users to track their steering actions, compromising the workflow steering lifecycle support.
 
 
 \subsubsection{Other Approaches for User Steering}
@@ -215,7 +266,7 @@ Dynamics \cite{Garcia2015Computational},
 whereas we aim to design a domain and application-independent solution.
 
 \citet{Spinuso2018Active} has investigated the importance of  capturing provenance data at runtime for steering in scientific workflows, in an approach called \textit{Active}. Among several contributions, he proposes S-PROV, a provenance data diagram extension of  W3C PROV, to represent workflow abstractions and concretization in the execution of real use cases.
-The main difference between \textit{Active} and our approach \textit{WfSteer} is that we aim at supporting computational steering in large-scale workflows, such as the ones found in CSE applications that require large HPC machines, which adds new challenges as already discussed. 
+The main difference between \textit{Active} and our approach \textit{WfSteer} is that we aim at supporting computational steering in large-scale workflows, such as the ones found in CSE applications that require large HPC machines, which adds new challenges as already discussed.
 Additionally, another difference is that we addressing the challenge to enable efficient capture and query of provenance  data considering use cases both with and without WMSs, which adds a new complexity to the problem.
 Therefore, we believe our detailed characterization of steering actions, along with the notion of provenance of the steering action data and our proposed W3C PROV-compliant representation of these concepts, and the design principles for efficient steering action data capture in HPC considering both with and WMSs is complimentary to the \textit{Active} approach.
 
@@ -282,12 +333,22 @@ have monitoring and data analyses support, but no adaptation nor steering action
 
 \section{Making a CSE Application Steerable}
 
-In Table \ref{tab:making_cse_steerable}, we summarize how each analyzed approach makes a CSE application steerable. We want to understand how they expose the data to be steered by the user. For instance, if they use message passing-based or
+In Table \ref{tab:making_cse_steerable}, we summarize how each analyzed approach makes a CSE application steerable and Figure \ref{fig:figtab3.2} shows the amounts of approach per category.
+Here, we want to analyze how they expose the data to be steered by the user. For instance, if they use message passing-based or
 data-oriented implementation for communication between the running
 parallel application and the user who is steering. The importance of this in the context of this thesis is that to be able to capture steering action data, our solution needs to be aware of how the CSE application is made steerable.
 
 
 \input{tables/chap3_tab2.tex}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth,keepaspectratio]{img/tab32.png}
+    \caption{Summarization of Table \ref{tab:making_cse_steerable}.}
+    \label{fig:figtab3.2}
+\end{figure}
+
 
 Users can develop their own \textit{ad-hoc} way to implement
 an adaptable application, such as using a simple file-based approach
@@ -298,13 +359,13 @@ General-purpose systems or frameworks or libraries that provide
 user Steering support are more suitable for a universal reuse
 \cite{Bauer2016In}.
 We investigate how such approaches can modify a running code.
-Approaches that eases data parallelism control, like WMSs with steering support
+Approaches that ease data parallelism control, like WMSs with steering support
 \cite{Dias2015Data-centric,Nguyen2014WorkWays:,Souza2017Data},
 provide non-intrusive strategies to support parameter sweep workflows, but cannot support applications that run as workflow scripts, like the ones we describe in Section \ref{subsec_scripts}.
 Other approaches and libraries enable
 users to manually instrument their source code for external invocations
 to a steering library \cite{Ayachit2016Performance,Bauer2016In,MulderSurvey}.
-Although ``manually'' may seem a problem, in a way that there are solutions that aim to enable autonomous ways to instrument a source code
+Although ``manually'' may be an issue, in a way that there are solutions that aim to enable autonomous ways to instrument a source code
 \cite{Pimentel2017noWorkflow:},
 manual instrumentation is a typical routine in the daily life of CSE
 application developers \cite{Bauer2016In,Silva2018Capturing}.
@@ -387,7 +448,7 @@ data capturers and adapters of steerable data.
 \section{Further Discussion on the Analyzed Approaches}
 
 We analyzed several approaches and their support for steering. The publications of three of them, RealtyGrid \cite{Pickles2005practical},
-Magellan \cite{Vetter1999Techniques}, 
+Magellan \cite{Vetter1999Techniques},
 and Mulder's \cite{MulderSurvey},
 contain high-level illustrations (Figures \ref{fig:fig3_1}, \ref{fig:fig3_2}, and \ref{fig:fig3_4}, respectively) of an approach
 that provides traditional user steering support.
@@ -605,4 +666,5 @@ Table \ref{tab:making_cse_steerable}.
 Thus, although many approaches provide steering support and some
 of them were proposed over twenty years ago, there are issues such as performance, consistency, and enabling multiple
 steering actions that are not yet addressed.
-Furthermore, none of these approaches allows for tracking steering actions, compromising the workflow steering lifecycle support. Except for DfAnalyzer and the WMS approaches, provenance data management techniques, which could be a solution for this, is not mentioned at all in the publications describing the approaches surveyed in this chapter.
+Furthermore, none of these approaches allows for tracking steering actions, compromising the workflow steering lifecycle support. Except for DfAnalyzer and the WMS approaches, provenance data management techniques, which could be a solution for this, are not mentioned at all in the publications describing the approaches surveyed in this chapter.
+In the next chapter, we present our approach for tracking steering actions in workflows.
