@@ -36,7 +36,7 @@ Two instances of this approach were designed and built: one is a lightweight too
 Using real use cases in the Oil and Gas industry, the experiments show that the proposed approach enables users to understand how their actions directly affect the workflow results at runtime and that the system design principles were essential to add 
 negligible overhead to the HPC workflows.
 
-**Author:** Renan Francisco Santos Souza -- [Webpage](https://renan-souza.github.io/) <br/>
+**Author:** Renan Francisco Santos Souza -- [Webpage](https://renansouza.org/) <br/>
 **Advisors:**  <br/>
 Prof. Marta Mattoso -- [Webpage](https://www.cos.ufrj.br/~marta/) <br/>
 Prof. Patrick Valduriez -- [Webpage](http://www-sop.inria.fr/members/Patrick.Valduriez/)  <br/>
